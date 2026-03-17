@@ -3,77 +3,60 @@ import streamlit as st
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
 st.title("🍳 LeftoverChef: Turn ANY Random Leftovers into Meals & Snacks!")
-st.markdown("**Truly random-friendly now** — shrimp, kale, avocado, raspberries, chicken, rice, oatmeal… anything goes!")
+st.markdown("**Sweet & Savory now separated** — no more chocolate + chicken nonsense. Detailed steps included!")
 
-# ================== ULTRA-EXPANDED RECIPE DATABASE ==================
+# ================== RECIPE DATABASE WITH DETAILED STEPS ==================
 recipes = [
-    # New for your latest test
-    {"title": "Shrimp Avocado Kale Salad Bowl", "keywords": {"shrimp", "avocado", "kale"}, "desc": "Chop kale + avocado, top with shrimp. Drizzle any yogurt or oil. Fresh lunch in 10 min!", "type": "savory"},
-    {"title": "Creamy Shrimp Kale Stir-Fry with Avocado", "keywords": {"shrimp", "kale", "avocado"}, "desc": "Sauté shrimp + kale, mash avocado as creamy sauce. Uses all three perfectly!", "type": "savory"},
-    {"title": "Raspberry Avocado Smoothie Bowl or Parfait", "keywords": {"raspberry", "avocado"}, "desc": "Blend raspberries + avocado (or mash for parfait). Add yogurt if you have it. Sweet snack!", "type": "sweet"},
-    {"title": "Shrimp Raspberry Kale Salad", "keywords": {"shrimp", "raspberry", "kale"}, "desc": "Sweet-savory twist: shrimp over kale with raspberry dressing (mash berries + avocado oil).", "type": "savory"},
+    # SWEET (chocolate + eggs)
+    {"title": "Chocolate Chip Pancakes or Waffles", "keywords": {"chocolate", "egg"}, "desc": "Step 1: Mix 1 cup flour (or oatmeal if no flour), 1 egg, 2 tbsp sugar (or honey), handful chocolate chips. Step 2: Add milk/water to make batter. Step 3: Cook on hot pan 2-3 min per side. Top with extra chips. Ready in 10 min!", "type": "sweet"},
+    {"title": "2-Ingredient Chocolate Cake (or Mug Cake)", "keywords": {"chocolate", "egg"}, "desc": "Step 1: Melt 1 cup chocolate chips (microwave 30 sec). Step 2: Whisk in 4 eggs until smooth. Step 3: Bake at 350°F for 20-25 min (or microwave 1-2 min for mug cake). Super rich and zero-waste!", "type": "sweet"},
 
-    # Previous random-friendly ones (chicken/rice/oatmeal/yogurt/etc.)
-    {"title": "Chicken Fried Rice Bowl", "keywords": {"chicken", "rice"}, "desc": "Chop chicken, fry with rice. Add any greens.", "type": "savory"},
-    {"title": "Chicken Yogurt Salad Bowl", "keywords": {"chicken", "yogurt", "salad"}, "desc": "Yogurt dressing + chicken + salad greens.", "type": "savory"},
-    {"title": "Oatmeal Yogurt Parfait", "keywords": {"oatmeal", "yogurt"}, "desc": "Layer for quick healthy snack/breakfast.", "type": "sweet"},
-    {"title": "Fridge-Clear Chicken Rice & Yogurt Bowl", "keywords": {"chicken", "rice", "yogurt"}, "desc": "Mix it all together.", "type": "savory"},
+    # SAVORY (chicken + nachos + eggs)
+    {"title": "Loaded Chicken Nachos (Reheat Upgrade)", "keywords": {"chicken", "nachos"}, "desc": "Step 1: Shred chicken drumstick meat. Step 2: Spread cold nachos on baking sheet, top with chicken + any cheese. Step 3: Bake at 400°F for 8-10 min until crispy and melty. Add egg on top if you want. Game-day level!", "type": "savory"},
+    {"title": "Chicken Nacho Migas (Egg Scramble)", "keywords": {"chicken", "nachos", "egg"}, "desc": "Step 1: Crush cold nachos into pieces. Step 2: Scramble 2-3 eggs with shredded chicken. Step 3: Stir in crushed nachos last 2 min. Top with avocado or salsa if available. Breakfast or quick dinner!", "type": "savory"},
+    {"title": "Cheesy Chicken Drumstick Nacho Bake", "keywords": {"chicken", "nachos"}, "desc": "Step 1: Shred chicken off drumstick. Step 2: Layer nachos in dish, add chicken + any cheese/scraps. Step 3: Bake 10 min at 400°F. Crispy, melty, uses everything!", "type": "savory"},
 
-    # Egg/pantry catch-alls (still here)
-    {"title": "Quick Egg Omelette or Frittata", "keywords": {"egg", "eggs"}, "desc": "Add any leftovers inside.", "type": "savory"},
-    {"title": "Pancakes or Muffins", "keywords": {"flour", "sugar", "egg"}, "desc": "Basic batter — mix in fruit or yogurt.", "type": "sweet"},
-
-    # Extra broad creative ones (so it NEVER says "add more")
-    {"title": "Anything Goes Stir-Fry or Bowl", "keywords": {"shrimp", "kale", "avocado", "raspberry", "chicken", "rice"}, "desc": "Chop everything, stir-fry or layer in a bowl with oil/spices. Uses whatever you threw in!", "type": "savory"},
-    {"title": "Creative Leftover Snack Plate", "keywords": {"raspberry", "avocado", "kale"}, "desc": "Slice avocado + raspberries on kale leaves. Add shrimp on the side. Zero cooking!", "type": "sweet"},
+    # Flexible catch-alls
+    {"title": "Sweet Chocolate Egg Treat", "keywords": {"chocolate", "egg"}, "desc": "Step 1: Whisk eggs with chocolate chips + sugar. Step 2: Cook like scrambled eggs or bake into cookies. 5-min snack!", "type": "sweet"},
+    {"title": "Savory Chicken Nacho Bowl", "keywords": {"chicken", "nachos"}, "desc": "Step 1: Warm chicken drumstick. Step 2: Pile on cold nachos. Step 3: Microwave 1-2 min + add egg if you have one.", "type": "savory"},
 ]
 
-def categorize_ingredients(ings):
-    meat = any(w in ings for w in ["chicken", "shrimp", "steak", "beef", "meat"])
-    return meat
-
 # ================== MAIN APP ==================
-ingredients_input = st.text_input("Enter comma-separated leftovers (e.g., raspberries, kale, shrimp, avocado):", "")
+ingredients_input = st.text_input("Enter comma-separated leftovers (e.g., chocolate chips, eggs, chicken drumstick, cold nachos):", "")
 
 if ingredients_input:
-    # Super-smart parsing for random words
     user_ings = set()
     for item in ingredients_input.lower().split(','):
-        item = item.strip()
-        item = item.replace("thigh", "").replace("half", "").replace("leftover", "").replace("berries", "berry").strip()
+        item = item.strip().replace("drumstick", "chicken").replace("cold", "").replace("chips", "chocolate").strip()
         if item:
             user_ings.add(item)
-            # Plurals & common fixes
             if item.endswith('s') and len(item) > 3:
                 user_ings.add(item[:-1])
-            if item == "raspberries":
-                user_ings.add("raspberry")
     
-    meat_present = categorize_ingredients(user_ings)
+    # Separate sweet & savory
+    sweet_ings = {"chocolate", "egg"}
+    savory_ings = {"chicken", "nachos"}
     
-    scored = []
+    st.subheader("🍫 Sweet Suggestions")
+    sweet_shown = False
     for rec in recipes:
-        if meat_present and rec["type"] == "sweet" and "shrimp" in user_ings:
-            continue
-        matches = len(rec["keywords"] & user_ings)
-        if matches >= 1:
-            score = matches / len(rec["keywords"])
-            scored.append((score, matches, rec))
-    
-    scored = sorted(scored, key=lambda x: (x[0], x[1]), reverse=True)
-    
-    st.subheader("🥇 Best Combined Meals & Snacks")
-    shown = 0
-    for score, matches, rec in scored[:6]:
-        st.markdown(f"**{rec['title']}** — Uses {matches} of your ingredients\n{rec['desc']}")
-        shown += 1
-    
-    # Always show quick ideas so it's never blank
-    st.subheader("Quick Creative Ideas")
-    st.markdown("• Mix everything into one big bowl or stir-fry")
-    if "avocado" in user_ings:
-        st.markdown("• Mash avocado as creamy dressing/sauce for anything")
-    if "raspberry" in user_ings:
-        st.markdown("• Add raspberries for sweet pop on savory dishes")
+        if rec["type"] == "sweet" and len(rec["keywords"] & user_ings) >= 1:
+            st.markdown(f"**{rec['title']}** — {rec['desc']}")
+            sweet_shown = True
+    if not sweet_shown:
+        st.markdown("No strong sweet matches — try adding sugar/flour next time!")
 
-st.caption("Now truly random — any fridge dump works! Ready for the fridge photo upload + AI auto-detection?")
+    st.subheader("🥩 Savory Suggestions")
+    savory_shown = False
+    for rec in recipes:
+        if rec["type"] == "savory" and len(rec["keywords"] & user_ings) >= 1:
+            st.markdown(f"**{rec['title']}** — {rec['desc']}")
+            savory_shown = True
+    if not savory_shown:
+        st.markdown("No strong savory matches — try adding cheese or spices!")
+
+    # Always-useful quick tips
+    st.subheader("Quick Zero-Waste Tips")
+    st.markdown("• Sweet items (chocolate + eggs) = dessert only\n• Savory items (chicken + nachos) = reheat & upgrade\n• Never mix sweet + savory in one dish!")
+
+st.caption("Now with separate sweet/savory + full step-by-step instructions! Fridge photo AI next?")
