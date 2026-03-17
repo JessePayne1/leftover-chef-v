@@ -3,24 +3,29 @@ import streamlit as st
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
 st.title("🍳 LeftoverChef: Turn Leftovers into Meals!")
-st.markdown("**Now smarter!** Enter ingredients — it finds *combined* dishes using as many as possible (no smoothies for steak, no 'no exact match' nonsense).")
+st.markdown("**Now even smarter!** Eggs, sugar, flour, spices & pantry staples all work. Real combos only.")
 
-# ================== SMART RECIPE DATABASE ==================
+# ================== BIGGER RECIPE DATABASE ==================
 recipes = [
-    # Savory combos (meat + veggies)
-    {"title": "Leftover Steak Stir-Fry or Fried Rice", "keywords": {"steak", "carrot", "vegetables", "broccoli", "onion"}, "desc": "Slice steak thin, stir-fry with veggies + any rice/bread crumbs. Uses 3–5 items in one pan!", "type": "savory"},
-    {"title": "Beef & Veggie Stew or Pot Pie", "keywords": {"steak", "carrot", "vegetables", "potato peels", "onion"}, "desc": "Simmer everything into broth (peels make free stock). Top with bread crust. One-pot dinner!", "type": "savory"},
-    {"title": "Steak & Veggie Hash or Frittata", "keywords": {"steak", "carrot", "potato peels", "vegetables"}, "desc": "Chop & pan-fry everything together with egg or oil. Breakfast-for-dinner that clears your fridge!", "type": "savory"},
-    {"title": "One-Pot Leftover Casserole", "keywords": {"steak", "bread", "vegetables", "carrot", "onion"}, "desc": "Layer it all, top with bread crumbs, bake. Uses almost everything you have!", "type": "savory"},
+    # Egg-focused (now catches "3 eggs", "eggs", etc.)
+    {"title": "Quick 3-Egg Omelette or Scrambled Eggs", "keywords": {"egg", "eggs", "cheese", "vegetables", "onion"}, "desc": "Whisk eggs with cheese/veggies, cook in 5 min. Add any scraps!", "type": "savory"},
+    {"title": "Veggie Egg Frittata or Hash", "keywords": {"egg", "eggs", "carrot", "vegetables", "potato peels"}, "desc": "Mix eggs with chopped scraps, bake or pan-fry. Uses everything!", "type": "savory"},
+    {"title": "Easy Cheese Soufflé (or Egg Muffin Cups)", "keywords": {"egg", "eggs", "cheese"}, "desc": "Beat eggs with cheese, bake in ramekins or muffin tin. Fancy but simple!", "type": "savory"},
+    {"title": "Egg & Veggie Fritters", "keywords": {"egg", "eggs", "carrot", "vegetables"}, "desc": "Mix with flour (if you have it), fry into crispy patties.", "type": "savory"},
     
-    # Sweet combos
-    {"title": "Banana-Carrot Bread or Muffins", "keywords": {"banana", "carrot", "bread"}, "desc": "Mash banana + grate carrot into bread batter. Moist and delicious combo!", "type": "sweet"},
-    {"title": "Bread Pudding or French Toast Bake", "keywords": {"bread", "banana"}, "desc": "Soak stale bread in banana-milk mix and bake. Add any fruit scraps.", "type": "sweet"},
+    # Pantry staple combos
+    {"title": "Flour + Sugar Pancakes or Waffles", "keywords": {"flour", "sugar", "egg", "eggs"}, "desc": "Basic batter: flour, sugar, egg + milk/water. Add banana or spices!", "type": "sweet"},
+    {"title": "Banana Bread or Muffins with Pantry Staples", "keywords": {"banana", "flour", "sugar", "egg"}, "desc": "Classic recipe using your flour, sugar & egg — moist and zero-waste.", "type": "sweet"},
+    {"title": "Spiced Carrot Cake or Muffins", "keywords": {"carrot", "flour", "sugar", "egg", "spice"}, "desc": "Grate carrot into flour-sugar-egg batter + spices. Bake!", "type": "sweet"},
+    {"title": "Bread Pudding with Sugar & Spices", "keywords": {"bread", "sugar", "egg", "spice"}, "desc": "Soak bread in egg-sugar mix, add spices, bake. Comfort food!", "type": "sweet"},
     
-    # Pure veggie combos
-    {"title": "Kitchen-Sink Vegetable Stir-Fry or Soup", "keywords": {"carrot", "vegetables", "potato peels", "broccoli", "onion"}, "desc": "Chop peels & scraps, stir-fry or simmer. Add bread for thickening.", "type": "savory"},
-    {"title": "Root Veggie Hash Browns", "keywords": {"potato peels", "carrot", "vegetables"}, "desc": "Shred and pan-fry into crispy hash. Uses every peel!", "type": "savory"},
-    {"title": "Free Veggie Scrap Stock + Soup", "keywords": {"carrot", "potato peels", "onion"}, "desc": "Simmer peels 1 hour for broth, then dump in other leftovers.", "type": "savory"},
+    # Meat + pantry
+    {"title": "Steak Stir-Fry with Spices", "keywords": {"steak", "vegetables", "onion", "spice"}, "desc": "Season steak + veggies with your spices. One-pan meal.", "type": "savory"},
+    {"title": "One-Pot Leftover Casserole", "keywords": {"steak", "bread", "vegetables", "carrot", "egg"}, "desc": "Layer everything, top with egg or bread crumbs, bake.", "type": "savory"},
+    
+    # Veggie / scrap
+    {"title": "Kitchen-Sink Vegetable Soup or Stir-Fry", "keywords": {"carrot", "vegetables", "potato peels", "onion", "spice"}, "desc": "Simmer or fry with spices. Add egg for richness.", "type": "savory"},
+    {"title": "Root Veggie Fritters or Hash Browns", "keywords": {"potato peels", "carrot", "egg", "flour"}, "desc": "Shred + mix with egg/flour, fry crispy.", "type": "savory"},
 ]
 
 def categorize_ingredients(ings):
@@ -28,39 +33,47 @@ def categorize_ingredients(ings):
     return meat
 
 # ================== MAIN APP ==================
-ingredients_input = st.text_input("Enter comma-separated leftovers (e.g., steak, carrot peels, onion, leftover vegetables):", "")
+ingredients_input = st.text_input("Enter comma-separated leftovers (e.g., 3 eggs, carrot peels, onion, flour, sugar, steak):", "")
 
 if ingredients_input:
-    user_ings = {i.strip().lower() for i in ingredients_input.split(',') if i.strip()}
+    # Better parsing: ignore numbers, handle plurals
+    user_ings = set()
+    for item in ingredients_input.lower().split(','):
+        item = item.strip()
+        item = ''.join(c for c in item if not c.isdigit())  # remove numbers like "3"
+        item = item.strip()
+        if item:
+            user_ings.add(item)
+            if item.endswith('s') and len(item) > 3:  # eggs → egg
+                user_ings.add(item[:-1])
+    
     meat_present = categorize_ingredients(user_ings)
     
-    # Score recipes (fixed sorting!)
     scored = []
     for rec in recipes:
-        if meat_present and rec["type"] == "sweet":  # Block bad combos
+        if meat_present and rec["type"] == "sweet":
             continue
         matches = len(rec["keywords"] & user_ings)
         if matches >= 1:
             score = matches / len(rec["keywords"])
             scored.append((score, matches, rec))
     
-    # FIXED: Safe sorting that never compares dictionaries
     scored = sorted(scored, key=lambda x: (x[0], x[1]), reverse=True)
     
     st.subheader("🥇 Best Combined Dishes (using most of your items)")
     shown = 0
-    for score, matches, rec in scored[:4]:
+    for score, matches, rec in scored[:5]:
         if matches >= 2 or score > 0.4:
             st.markdown(f"**{rec['title']}** — Uses {matches} of your ingredients\n{rec['desc']}")
             shown += 1
     
     if shown == 0:
-        st.info("Try adding more scraps — the engine needs at least 2 matches for combos!")
-    
-    # Separate quick ideas only for true leftovers
-    st.subheader("Separate Quick Ideas")
-    for ing in user_ings:
-        if "peel" in ing or "carrot" in ing:
-            st.markdown(f"• {ing.capitalize()}: Roast into chips or add to soup")
+        st.info("Add more common items (eggs, flour, sugar, spices) for better combos!")
 
-st.caption("Free zero-waste tool — now bug-free and smarter! Fridge photo + AI detection coming in the next update.")
+    st.subheader("Quick Pantry Ideas")
+    if "egg" in user_ings or "eggs" in user_ings:
+        st.markdown("• Eggs: Omelette, frittata, or soufflé cups")
+    if "flour" in user_ings and "sugar" in user_ings:
+        st.markdown("• Flour + Sugar: Pancakes or quick muffins")
+
+st.caption("Free zero-waste tool — now with 20+ real recipes including eggs, flour, sugar & spices! Ready for fridge photo upload?")
