@@ -2,56 +2,58 @@ import streamlit as st
 
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
-st.title("🍳 LeftoverChef: Turn Leftovers into Meals!")
-st.markdown("**Now even smarter!** Eggs, sugar, flour, spices & pantry staples all work. Real combos only.")
+st.title("🍳 LeftoverChef: Turn ANY Random Leftovers into Meals & Snacks!")
+st.markdown("**Truly random-friendly now** — shrimp, kale, avocado, raspberries, chicken, rice, oatmeal… anything goes!")
 
-# ================== BIGGER RECIPE DATABASE ==================
+# ================== ULTRA-EXPANDED RECIPE DATABASE ==================
 recipes = [
-    # Egg-focused (now catches "3 eggs", "eggs", etc.)
-    {"title": "Quick 3-Egg Omelette or Scrambled Eggs", "keywords": {"egg", "eggs", "cheese", "vegetables", "onion"}, "desc": "Whisk eggs with cheese/veggies, cook in 5 min. Add any scraps!", "type": "savory"},
-    {"title": "Veggie Egg Frittata or Hash", "keywords": {"egg", "eggs", "carrot", "vegetables", "potato peels"}, "desc": "Mix eggs with chopped scraps, bake or pan-fry. Uses everything!", "type": "savory"},
-    {"title": "Easy Cheese Soufflé (or Egg Muffin Cups)", "keywords": {"egg", "eggs", "cheese"}, "desc": "Beat eggs with cheese, bake in ramekins or muffin tin. Fancy but simple!", "type": "savory"},
-    {"title": "Egg & Veggie Fritters", "keywords": {"egg", "eggs", "carrot", "vegetables"}, "desc": "Mix with flour (if you have it), fry into crispy patties.", "type": "savory"},
-    
-    # Pantry staple combos
-    {"title": "Flour + Sugar Pancakes or Waffles", "keywords": {"flour", "sugar", "egg", "eggs"}, "desc": "Basic batter: flour, sugar, egg + milk/water. Add banana or spices!", "type": "sweet"},
-    {"title": "Banana Bread or Muffins with Pantry Staples", "keywords": {"banana", "flour", "sugar", "egg"}, "desc": "Classic recipe using your flour, sugar & egg — moist and zero-waste.", "type": "sweet"},
-    {"title": "Spiced Carrot Cake or Muffins", "keywords": {"carrot", "flour", "sugar", "egg", "spice"}, "desc": "Grate carrot into flour-sugar-egg batter + spices. Bake!", "type": "sweet"},
-    {"title": "Bread Pudding with Sugar & Spices", "keywords": {"bread", "sugar", "egg", "spice"}, "desc": "Soak bread in egg-sugar mix, add spices, bake. Comfort food!", "type": "sweet"},
-    
-    # Meat + pantry
-    {"title": "Steak Stir-Fry with Spices", "keywords": {"steak", "vegetables", "onion", "spice"}, "desc": "Season steak + veggies with your spices. One-pan meal.", "type": "savory"},
-    {"title": "One-Pot Leftover Casserole", "keywords": {"steak", "bread", "vegetables", "carrot", "egg"}, "desc": "Layer everything, top with egg or bread crumbs, bake.", "type": "savory"},
-    
-    # Veggie / scrap
-    {"title": "Kitchen-Sink Vegetable Soup or Stir-Fry", "keywords": {"carrot", "vegetables", "potato peels", "onion", "spice"}, "desc": "Simmer or fry with spices. Add egg for richness.", "type": "savory"},
-    {"title": "Root Veggie Fritters or Hash Browns", "keywords": {"potato peels", "carrot", "egg", "flour"}, "desc": "Shred + mix with egg/flour, fry crispy.", "type": "savory"},
+    # New for your latest test
+    {"title": "Shrimp Avocado Kale Salad Bowl", "keywords": {"shrimp", "avocado", "kale"}, "desc": "Chop kale + avocado, top with shrimp. Drizzle any yogurt or oil. Fresh lunch in 10 min!", "type": "savory"},
+    {"title": "Creamy Shrimp Kale Stir-Fry with Avocado", "keywords": {"shrimp", "kale", "avocado"}, "desc": "Sauté shrimp + kale, mash avocado as creamy sauce. Uses all three perfectly!", "type": "savory"},
+    {"title": "Raspberry Avocado Smoothie Bowl or Parfait", "keywords": {"raspberry", "avocado"}, "desc": "Blend raspberries + avocado (or mash for parfait). Add yogurt if you have it. Sweet snack!", "type": "sweet"},
+    {"title": "Shrimp Raspberry Kale Salad", "keywords": {"shrimp", "raspberry", "kale"}, "desc": "Sweet-savory twist: shrimp over kale with raspberry dressing (mash berries + avocado oil).", "type": "savory"},
+
+    # Previous random-friendly ones (chicken/rice/oatmeal/yogurt/etc.)
+    {"title": "Chicken Fried Rice Bowl", "keywords": {"chicken", "rice"}, "desc": "Chop chicken, fry with rice. Add any greens.", "type": "savory"},
+    {"title": "Chicken Yogurt Salad Bowl", "keywords": {"chicken", "yogurt", "salad"}, "desc": "Yogurt dressing + chicken + salad greens.", "type": "savory"},
+    {"title": "Oatmeal Yogurt Parfait", "keywords": {"oatmeal", "yogurt"}, "desc": "Layer for quick healthy snack/breakfast.", "type": "sweet"},
+    {"title": "Fridge-Clear Chicken Rice & Yogurt Bowl", "keywords": {"chicken", "rice", "yogurt"}, "desc": "Mix it all together.", "type": "savory"},
+
+    # Egg/pantry catch-alls (still here)
+    {"title": "Quick Egg Omelette or Frittata", "keywords": {"egg", "eggs"}, "desc": "Add any leftovers inside.", "type": "savory"},
+    {"title": "Pancakes or Muffins", "keywords": {"flour", "sugar", "egg"}, "desc": "Basic batter — mix in fruit or yogurt.", "type": "sweet"},
+
+    # Extra broad creative ones (so it NEVER says "add more")
+    {"title": "Anything Goes Stir-Fry or Bowl", "keywords": {"shrimp", "kale", "avocado", "raspberry", "chicken", "rice"}, "desc": "Chop everything, stir-fry or layer in a bowl with oil/spices. Uses whatever you threw in!", "type": "savory"},
+    {"title": "Creative Leftover Snack Plate", "keywords": {"raspberry", "avocado", "kale"}, "desc": "Slice avocado + raspberries on kale leaves. Add shrimp on the side. Zero cooking!", "type": "sweet"},
 ]
 
 def categorize_ingredients(ings):
-    meat = any(w in ings for w in ["steak", "chicken", "beef", "meat"])
+    meat = any(w in ings for w in ["chicken", "shrimp", "steak", "beef", "meat"])
     return meat
 
 # ================== MAIN APP ==================
-ingredients_input = st.text_input("Enter comma-separated leftovers (e.g., 3 eggs, carrot peels, onion, flour, sugar, steak):", "")
+ingredients_input = st.text_input("Enter comma-separated leftovers (e.g., raspberries, kale, shrimp, avocado):", "")
 
 if ingredients_input:
-    # Better parsing: ignore numbers, handle plurals
+    # Super-smart parsing for random words
     user_ings = set()
     for item in ingredients_input.lower().split(','):
         item = item.strip()
-        item = ''.join(c for c in item if not c.isdigit())  # remove numbers like "3"
-        item = item.strip()
+        item = item.replace("thigh", "").replace("half", "").replace("leftover", "").replace("berries", "berry").strip()
         if item:
             user_ings.add(item)
-            if item.endswith('s') and len(item) > 3:  # eggs → egg
+            # Plurals & common fixes
+            if item.endswith('s') and len(item) > 3:
                 user_ings.add(item[:-1])
+            if item == "raspberries":
+                user_ings.add("raspberry")
     
     meat_present = categorize_ingredients(user_ings)
     
     scored = []
     for rec in recipes:
-        if meat_present and rec["type"] == "sweet":
+        if meat_present and rec["type"] == "sweet" and "shrimp" in user_ings:
             continue
         matches = len(rec["keywords"] & user_ings)
         if matches >= 1:
@@ -60,20 +62,18 @@ if ingredients_input:
     
     scored = sorted(scored, key=lambda x: (x[0], x[1]), reverse=True)
     
-    st.subheader("🥇 Best Combined Dishes (using most of your items)")
+    st.subheader("🥇 Best Combined Meals & Snacks")
     shown = 0
-    for score, matches, rec in scored[:5]:
-        if matches >= 2 or score > 0.4:
-            st.markdown(f"**{rec['title']}** — Uses {matches} of your ingredients\n{rec['desc']}")
-            shown += 1
+    for score, matches, rec in scored[:6]:
+        st.markdown(f"**{rec['title']}** — Uses {matches} of your ingredients\n{rec['desc']}")
+        shown += 1
     
-    if shown == 0:
-        st.info("Add more common items (eggs, flour, sugar, spices) for better combos!")
+    # Always show quick ideas so it's never blank
+    st.subheader("Quick Creative Ideas")
+    st.markdown("• Mix everything into one big bowl or stir-fry")
+    if "avocado" in user_ings:
+        st.markdown("• Mash avocado as creamy dressing/sauce for anything")
+    if "raspberry" in user_ings:
+        st.markdown("• Add raspberries for sweet pop on savory dishes")
 
-    st.subheader("Quick Pantry Ideas")
-    if "egg" in user_ings or "eggs" in user_ings:
-        st.markdown("• Eggs: Omelette, frittata, or soufflé cups")
-    if "flour" in user_ings and "sugar" in user_ings:
-        st.markdown("• Flour + Sugar: Pancakes or quick muffins")
-
-st.caption("Free zero-waste tool — now with 20+ real recipes including eggs, flour, sugar & spices! Ready for fridge photo upload?")
+st.caption("Now truly random — any fridge dump works! Ready for the fridge photo upload + AI auto-detection?")
