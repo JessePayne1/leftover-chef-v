@@ -4,44 +4,44 @@ import base64
 
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
-# === CLEAN CUSTOM STYLING (light gray/turquoise button + larger titles) ===
+# === CLEAN STYLING (light turquoise-gray button + larger titles) ===
 st.html("""
 <style>
     .stButton>button {
-        background-color: #48D1CC !important;   /* light gray/turquoise */
+        background-color: #48D1CC !important;
         color: white !important;
         font-size: 18px !important;
-        padding: 12px 24px !important;
-        border-radius: 8px !important;
+        padding: 14px 28px !important;
+        border-radius: 10px !important;
     }
     .stButton>button:hover {
-        background-color: #20B2AA !important;   /* slightly darker turquoise-gray on hover */
+        background-color: #20B2AA !important;
     }
-    h1 { font-size: 2.8rem !important; font-weight: 700 !important; }
+    h1 { font-size: 2.8rem !important; font-weight: 700 !important; margin-bottom: 10px !important; }
     h2 { font-size: 2.2rem !important; font-weight: 600 !important; }
-    .stMarkdown h3 { font-size: 1.8rem !important; }
+    .stMarkdown { margin-bottom: 20px !important; }
 </style>
 """)
 
-st.title("🍳 LeftoverChef: ANY Combo → Real Meals!")
-st.markdown("**AI-powered + Premium unlocks fridge photo + 5-min & microwave recipes**")
+st.title("🍳 LeftoverChef")
+st.markdown("**Turn any leftovers into real meals** — AI finds smart combos using almost everything you have.")
 
 # Sidebar
 with st.sidebar:
     api_key = st.text_input("OpenAI API Key", type="password", value=st.session_state.get("api_key", ""))
     if api_key:
         st.session_state.api_key = api_key
-    st.caption("Your $10 credits are ready!")
+    st.caption("Your credits are ready!")
 
-premium = st.checkbox("🔓 Premium Mode (fridge photo + 5-min & microwave recipes)", value=False)
+premium = st.checkbox("🔓 Premium Mode — unlocks fridge photo + 5-min & microwave recipes", value=False)
 
 client = OpenAI(api_key=st.session_state.get("api_key", ""))
 
 uploaded_file = None
 if premium:
-    uploaded_file = st.file_uploader("📸 Snap a fridge photo (Premium)", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("📸 Snap a photo of your fridge (Premium)", type=["jpg", "jpeg", "png"])
 
-ingredients_input = st.text_input("Or type ingredients:", 
+ingredients_input = st.text_input("Or type your ingredients (works in free tier too):", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
 if st.button("Generate Recipes", type="primary") and (ingredients_input or uploaded_file):
@@ -65,9 +65,10 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         full_ingredients = detected + (ingredients_input or "")
         
         extra = "Prioritize 5-minute meals and microwave-only versions." if premium else ""
-        prompt = f"""Create 2-3 zero-waste recipes using as many of these as possible: {full_ingredients}.
-        Add common staples if needed. {extra}
-        Separate sweet/savory. For each: Title, ingredients used, step-by-step."""
+        prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
+        Add common staples (oil, salt, garlic, etc.) if needed. {extra}
+        Separate sweet and savory clearly.
+        For each recipe give: Title, ingredients used, simple step-by-step instructions."""
 
         response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
         recipes_text = response.choices[0].message.content
@@ -75,16 +76,7 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         st.subheader("🥇 Your AI Recipes")
         st.markdown(recipes_text)
 
-        st.subheader("📸 Recipe Inspiration Photos")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.image("https://picsum.photos/id/1015/400/300", use_column_width=True, caption="Fresh & ready")
-        with col2:
-            st.image("https://picsum.photos/id/292/400/300", use_column_width=True, caption="Quick microwave style")
-        with col3:
-            st.image("https://picsum.photos/id/431/400/300", use_column_width=True, caption="Zero-waste bowl")
-
         if premium:
-            st.success("✅ Premium active — photo detected + 5-min/microwave prioritized!")
+            st.success("✅ Premium active — fridge photo detected + quick versions prioritized!")
 
-st.caption("Free tier works great. Premium = fridge photo + quick meals. Ready for Stripe subscription button?")
+st.caption("Free tier is fully usable. Premium = photo upload + 5-min/microwave recipes. Ready for the $4.99/month subscription button?")
