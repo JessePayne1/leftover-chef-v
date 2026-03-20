@@ -4,24 +4,24 @@ import base64
 
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
-# === CUSTOM STYLING: Colors + Larger Titles ===
-st.markdown("""
+# === CLEAN CUSTOM STYLING (no more raw code showing) ===
+st.html("""
 <style>
     .stButton>button {
-        background-color: #4CAF50 !important;   /* nice green */
+        background-color: #4CAF50 !important;
         color: white !important;
         font-size: 18px !important;
         padding: 12px 24px !important;
         border-radius: 8px !important;
     }
     .stButton>button:hover {
-        background-color: #388E3C !important;   /* darker green on hover */
+        background-color: #388E3C !important;
     }
     h1 { font-size: 2.8rem !important; font-weight: 700 !important; }
     h2 { font-size: 2.2rem !important; font-weight: 600 !important; }
     .stMarkdown h3 { font-size: 1.8rem !important; }
 </style>
-""", unsafe_allow_html=True)
+""")
 
 st.title("🍳 LeftoverChef: ANY Combo → Real Meals!")
 st.markdown("**AI-powered + Premium unlocks fridge photo + 5-min & microwave recipes**")
@@ -37,7 +37,6 @@ premium = st.checkbox("🔓 Premium Mode (fridge photo + 5-min & microwave recip
 
 client = OpenAI(api_key=st.session_state.get("api_key", ""))
 
-# Photo upload (Premium)
 uploaded_file = None
 if premium:
     uploaded_file = st.file_uploader("📸 Snap a fridge photo (Premium)", type=["jpg", "jpeg", "png"])
@@ -47,7 +46,6 @@ ingredients_input = st.text_input("Or type ingredients:",
 
 if st.button("Generate Recipes", type="primary") and (ingredients_input or uploaded_file):
     with st.spinner("AI is creating recipes that use almost everything..."):
-        # Photo detection
         detected = ""
         if uploaded_file and premium:
             bytes_data = uploaded_file.getvalue()
@@ -77,7 +75,6 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         st.subheader("🥇 Your AI Recipes")
         st.markdown(recipes_text)
 
-        # === NEW: Pictures Section ===
         st.subheader("📸 Recipe Inspiration Photos")
         col1, col2, col3 = st.columns(3)
         with col1:
