@@ -32,7 +32,7 @@ with st.sidebar:
         st.session_state.api_key = api_key
     st.caption("Your credits are ready!")
 
-premium = st.checkbox("🔓 Premium Mode — unlocks fridge photo + 5-min & microwave recipes", value=False)
+premium = st.checkbox("🔓 Premium Mode — unlocks fridge photo + 5-min & microwave BONUS versions", value=False)
 
 client = OpenAI(api_key=st.session_state.get("api_key", ""))
 
@@ -44,7 +44,7 @@ ingredients_input = st.text_input("Or type your ingredients:",
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
 if st.button("Generate Recipes", type="primary") and (ingredients_input or uploaded_file):
-    with st.spinner("AI is creating recipes that use almost everything..."):
+    with st.spinner("AI is creating recipes..."):
         detected = ""
         if uploaded_file and premium:
             bytes_data = uploaded_file.getvalue()
@@ -63,11 +63,11 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         
         full_ingredients = detected + (ingredients_input or "")
         
-        extra = "Prioritize 5-minute meals and microwave-only versions." if premium else ""
+        # Always generate regular recipes (stovetop/oven welcome)
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
-        Add common staples (oil, salt, garlic, etc.) if needed. {extra}
+        Add common staples (oil, salt, garlic, etc.) if needed.
         Separate sweet and savory clearly.
-        Format EXACTLY like this (use HTML for styling):
+        Format EXACTLY like this:
 
         <h3 style="color: #FFCC99;">Recipe Title Here</h3>
         <strong style="font-size: 1.4rem;">Ingredients used:</strong>
@@ -81,10 +81,25 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
         recipes_text = response.choices[0].message.content
         
-        st.subheader("🥇 Your AI Recipes")
+        st.subheader("🥇 Your Regular Recipes")
         st.markdown(recipes_text, unsafe_allow_html=True)
 
+        # Premium bonus: 5-min & microwave add-ons
         if premium:
-            st.success("✅ Premium active — fridge photo detected + quick versions prioritized!")
+            extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions of the recipes above.
+            Format as:
+            <h3 style="color: #FFCC99;">Quick 5-Min / Microwave Version: Recipe Title</h3>
+            <strong style="font-size: 1.4rem;">Ingredients used:</strong> ...
+            <strong style="font-size: 1.4rem;">Step-by-step instructions:</strong>
+            1. ...
+            2. ..."""
+            
+            quick_response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": extra_prompt}])
+            quick_text = quick_response.choices[0].message.content
+            
+            st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
+            st.markdown(quick_text, unsafe_allow_html=True)
+            
+            st.success("✅ Premium active — fridge photo + quick versions unlocked!")
 
-st.caption("Free tier works great. Premium = fridge photo + 5-min/microwave recipes. Ready for the $4.99/month subscription button?")
+st.caption("Free tier = regular recipes. Premium = fridge photo + 5-min/microwave bonus add-ons. Ready for the $4.99/month subscription button?")
