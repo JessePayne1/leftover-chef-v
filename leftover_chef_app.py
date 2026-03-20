@@ -4,18 +4,18 @@ import base64
 
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
-# === CLEAN CUSTOM STYLING (no more raw code showing) ===
+# === CLEAN CUSTOM STYLING (light gray/turquoise button + larger titles) ===
 st.html("""
 <style>
     .stButton>button {
-        background-color: #4CAF50 !important;
+        background-color: #48D1CC !important;   /* light gray/turquoise */
         color: white !important;
         font-size: 18px !important;
         padding: 12px 24px !important;
         border-radius: 8px !important;
     }
     .stButton>button:hover {
-        background-color: #388E3C !important;
+        background-color: #20B2AA !important;   /* slightly darker turquoise-gray on hover */
     }
     h1 { font-size: 2.8rem !important; font-weight: 700 !important; }
     h2 { font-size: 2.2rem !important; font-weight: 600 !important; }
@@ -87,4 +87,4 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         if premium:
             st.success("✅ Premium active — photo detected + 5-min/microwave prioritized!")
 
-st.caption("Free tier works great. Premium = fridge photo + quick meals. Ready for Stripe subscription button?")
+st.caption("Free tier works great. Premium = fridge photo
