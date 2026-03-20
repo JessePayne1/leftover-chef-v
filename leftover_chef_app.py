@@ -87,4 +87,4 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         if premium:
             st.success("✅ Premium active — photo detected + 5-min/microwave prioritized!")
 
-st.caption("Free tier works great. Premium = fridge photo
+st.caption("Free tier works great. Premium = fridge photo + quick meals. Ready for Stripe subscription button?")
