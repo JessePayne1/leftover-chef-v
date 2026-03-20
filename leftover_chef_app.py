@@ -4,7 +4,7 @@ import base64
 
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
-# === CLEAN STYLING (turquoise-gray button + peach titles) ===
+# === CLEAN STYLING (midnight blue background + turquoise button + peach titles) ===
 st.html("""
 <style>
     .stButton>button {
@@ -19,6 +19,10 @@ st.html("""
     }
     h1 { font-size: 2.8rem !important; font-weight: 700 !important; }
     h2 { font-size: 2.2rem !important; font-weight: 600 !important; }
+    body, .stApp {
+        background-color: #0A1F3D !important;   /* rich midnight blue */
+        color: white !important;
+    }
 </style>
 """)
 
@@ -63,7 +67,7 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         
         full_ingredients = detected + (ingredients_input or "")
         
-        # Always generate regular recipes (stovetop/oven welcome)
+        # Regular recipes
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
         Add common staples (oil, salt, garlic, etc.) if needed.
         Separate sweet and savory clearly.
@@ -84,9 +88,9 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         st.subheader("🥇 Your Regular Recipes")
         st.markdown(recipes_text, unsafe_allow_html=True)
 
-        # Premium bonus: 5-min & microwave add-ons
+        # Premium bonus
         if premium:
-            extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions of the recipes above.
+            extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions.
             Format as:
             <h3 style="color: #FFCC99;">Quick 5-Min / Microwave Version: Recipe Title</h3>
             <strong style="font-size: 1.4rem;">Ingredients used:</strong> ...
