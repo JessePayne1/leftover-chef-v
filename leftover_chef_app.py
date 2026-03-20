@@ -4,7 +4,7 @@ import base64
 
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
-# === CLEAN STYLING (turquoise-gray button + peach meal titles) ===
+# === CLEAN STYLING (turquoise-gray button + peach titles) ===
 st.html("""
 <style>
     .stButton>button {
@@ -67,10 +67,16 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
         Add common staples (oil, salt, garlic, etc.) if needed. {extra}
         Separate sweet and savory clearly.
-        Format each recipe exactly like this:
+        Format EXACTLY like this (use HTML for styling):
+
         <h3 style="color: #FFCC99;">Recipe Title Here</h3>
-        Ingredients used: ...
-        Step-by-step instructions: ..."""
+        <strong style="font-size: 1.4rem;">Ingredients used:</strong>
+        - list them here
+
+        <strong style="font-size: 1.4rem;">Step-by-step instructions:</strong>
+        1. First step...
+        2. Second step...
+        3. etc."""
 
         response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
         recipes_text = response.choices[0].message.content
