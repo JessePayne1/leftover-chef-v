@@ -4,7 +4,7 @@ import base64
 
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
-# === CLEAN STYLING (light turquoise-gray button + larger titles) ===
+# === CLEAN STYLING (turquoise-gray button + peach meal titles) ===
 st.html("""
 <style>
     .stButton>button {
@@ -17,14 +17,13 @@ st.html("""
     .stButton>button:hover {
         background-color: #20B2AA !important;
     }
-    h1 { font-size: 2.8rem !important; font-weight: 700 !important; margin-bottom: 10px !important; }
+    h1 { font-size: 2.8rem !important; font-weight: 700 !important; }
     h2 { font-size: 2.2rem !important; font-weight: 600 !important; }
-    .stMarkdown { margin-bottom: 20px !important; }
 </style>
 """)
 
 st.title("🍳 LeftoverChef")
-st.markdown("**Turn any leftovers into real meals** — AI finds smart combos using almost everything you have.")
+st.markdown("**Turn any leftovers into real meals** — AI finds smart combos using almost everything.")
 
 # Sidebar
 with st.sidebar:
@@ -41,7 +40,7 @@ uploaded_file = None
 if premium:
     uploaded_file = st.file_uploader("📸 Snap a photo of your fridge (Premium)", type=["jpg", "jpeg", "png"])
 
-ingredients_input = st.text_input("Or type your ingredients (works in free tier too):", 
+ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
 if st.button("Generate Recipes", type="primary") and (ingredients_input or uploaded_file):
@@ -68,15 +67,18 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
         Add common staples (oil, salt, garlic, etc.) if needed. {extra}
         Separate sweet and savory clearly.
-        For each recipe give: Title, ingredients used, simple step-by-step instructions."""
+        Format each recipe exactly like this:
+        <h3 style="color: #FFCC99;">Recipe Title Here</h3>
+        Ingredients used: ...
+        Step-by-step instructions: ..."""
 
         response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
         recipes_text = response.choices[0].message.content
         
         st.subheader("🥇 Your AI Recipes")
-        st.markdown(recipes_text)
+        st.markdown(recipes_text, unsafe_allow_html=True)
 
         if premium:
             st.success("✅ Premium active — fridge photo detected + quick versions prioritized!")
 
-st.caption("Free tier is fully usable. Premium = photo upload + 5-min/microwave recipes. Ready for the $4.99/month subscription button?")
+st.caption("Free tier works great. Premium = fridge photo + 5-min/microwave recipes. Ready for the $4.99/month subscription button?")
