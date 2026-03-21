@@ -4,7 +4,7 @@ import base64
 
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
-# === CLEAN STYLING (midnight blue + turquoise button + peach titles) ===
+# === CLEAN STYLING ===
 st.html("""
 <style>
     .stButton>button {
@@ -24,10 +24,11 @@ st.html("""
 </style>
 """)
 
-# === BIGGER EMOJI + UNDERLINED TITLE (looks great on phone) ===
+# === BIGGER OFF-CENTERED EMOJI + THINNER/LOWER UNDERLINE ===
 st.html("""
-<h1 style="font-size: 3.8rem; margin-bottom: 10px; text-align: center;">
-  🍳 <span style="text-decoration: underline; text-decoration-color: #FFCC99; text-decoration-thickness: 4px; color: white;">LeftoverChef</span>
+<h1 style="font-size: 4.2rem; margin-bottom: 8px; text-align: center; position: relative;">
+  <span style="position: absolute; left: -30px; font-size: 5.5rem; top: -12px; opacity: 0.95;">🍳</span>
+  <span style="text-decoration: underline; text-decoration-color: #FFCC99; text-decoration-thickness: 3px; text-underline-offset: 12px; color: white;">LeftoverChef</span>
 </h1>
 """)
 
@@ -92,10 +93,10 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         st.subheader("🥇 Your Regular Recipes")
         st.markdown(recipes_text, unsafe_allow_html=True)
 
-        # Premium bonus (clean lists)
+        # Premium bonus
         if premium:
             extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions.
-            Format EXACTLY like this (step-by-step on its own line):
+            Format EXACTLY like this:
 
             <h3 style="color: #FFCC99;">Quick 5-Min / Microwave Version: Recipe Title</h3>
             <strong style="font-size: 1.4rem;">Ingredients used:</strong>
