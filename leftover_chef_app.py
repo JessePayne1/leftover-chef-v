@@ -4,7 +4,7 @@ import base64
 
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
-# === CLEAN STYLING (midnight blue background + turquoise button + peach titles) ===
+# === CLEAN STYLING (midnight blue + turquoise button + peach titles) ===
 st.html("""
 <style>
     .stButton>button {
@@ -17,16 +17,20 @@ st.html("""
     .stButton>button:hover {
         background-color: #20B2AA !important;
     }
-    h1 { font-size: 2.8rem !important; font-weight: 700 !important; }
-    h2 { font-size: 2.2rem !important; font-weight: 600 !important; }
     body, .stApp {
-        background-color: #0A1F3D !important;   /* rich midnight blue */
+        background-color: #0A1F3D !important;
         color: white !important;
     }
 </style>
 """)
 
-st.title("🍳 LeftoverChef")
+# === BIGGER EMOJI + UNDERLINED TITLE (looks great on phone) ===
+st.html("""
+<h1 style="font-size: 3.8rem; margin-bottom: 10px; text-align: center;">
+  🍳 <span style="text-decoration: underline; text-decoration-color: #FFCC99; text-decoration-thickness: 4px; color: white;">LeftoverChef</span>
+</h1>
+""")
+
 st.markdown("**Turn any leftovers into real meals** — AI finds smart combos using almost everything.")
 
 # Sidebar
@@ -88,16 +92,20 @@ if st.button("Generate Recipes", type="primary") and (ingredients_input or uploa
         st.subheader("🥇 Your Regular Recipes")
         st.markdown(recipes_text, unsafe_allow_html=True)
 
-        # Premium bonus
+        # Premium bonus (clean lists)
         if premium:
             extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions.
-            Format as:
+            Format EXACTLY like this (step-by-step on its own line):
+
             <h3 style="color: #FFCC99;">Quick 5-Min / Microwave Version: Recipe Title</h3>
-            <strong style="font-size: 1.4rem;">Ingredients used:</strong> ...
+            <strong style="font-size: 1.4rem;">Ingredients used:</strong>
+            - list them here
+
             <strong style="font-size: 1.4rem;">Step-by-step instructions:</strong>
-            1. ...
-            2. ..."""
-            
+            1. First step...
+            2. Second step...
+            3. etc."""
+
             quick_response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": extra_prompt}])
             quick_text = quick_response.choices[0].message.content
             
