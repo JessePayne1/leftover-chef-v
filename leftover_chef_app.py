@@ -24,7 +24,7 @@ st.html("""
     .chef-hat {
         font-size: 42px;
         transform: rotate(15deg);
-        margin-left: 12px;
+        margin-left: 6px;   /* tighter spacing */
         display: inline-block;
         vertical-align: middle;
     }
@@ -59,8 +59,8 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
-# === GENERATE BUTTON + TILTED CHEF'S HAT ===
-col1, col2 = st.columns([4, 1])
+# === GENERATE BUTTON + CLOSER CHEF'S HAT ===
+col1, col2 = st.columns([5, 0.6])
 with col1:
     generate_clicked = st.button("Generate Recipes", type="primary")
 with col2:
