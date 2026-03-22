@@ -21,12 +21,16 @@ st.html("""
         background-color: #0A1F3D !important;
         color: white !important;
     }
+    .button-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: nowrap;
+    }
     .chef-hat {
         font-size: 42px;
         transform: rotate(15deg);
-        margin-left: 6px;   /* tighter spacing */
-        display: inline-block;
-        vertical-align: middle;
+        flex-shrink: 0;
     }
 </style>
 """)
@@ -59,12 +63,10 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
-# === GENERATE BUTTON + CLOSER CHEF'S HAT ===
-col1, col2 = st.columns([5, 0.6])
-with col1:
-    generate_clicked = st.button("Generate Recipes", type="primary")
-with col2:
-    st.markdown('<span class="chef-hat">👨‍🍳</span>', unsafe_allow_html=True)
+# === GENERATE BUTTON + CHEF'S HAT (stays side-by-side on phone) ===
+st.markdown('<div class="button-row">', unsafe_allow_html=True)
+generate_clicked = st.button("Generate Recipes", type="primary")
+st.markdown('<span class="chef-hat">👨‍🍳</span></div>', unsafe_allow_html=True)
 
 if generate_clicked and (ingredients_input or uploaded_file):
     with st.spinner("AI is creating recipes..."):
