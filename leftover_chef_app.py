@@ -21,14 +21,21 @@ st.html("""
         background-color: #0A1F3D !important;
         color: white !important;
     }
+    .chef-hat {
+        font-size: 42px;
+        transform: rotate(15deg);
+        margin-left: 12px;
+        display: inline-block;
+        vertical-align: middle;
+    }
 </style>
 """)
 
-# === TITLE: Big pan + underline now perfectly in the middle of the pan ===
+# === TITLE ===
 st.html("""
 <h1 style="font-size: 3.5rem; margin-bottom: 8px; text-align: center; position: relative;">
-  <span style="position: absolute; left: -45px; font-size: 5.5rem; top: -15px; opacity: 0.95;">🍳</span>
-  <span style="text-decoration: underline; text-decoration-color: #FFCC99; text-decoration-thickness: 3px; text-underline-offset: 8px; color: white;">LeftoverChef</span>
+  <span style="position: absolute; left: -45px; font-size: 5.5rem; top: -18px; opacity: 0.95;">🍳</span>
+  <span style="text-decoration: underline; text-decoration-color: #FFCC99; text-decoration-thickness: 3px; text-underline-offset: 12px; color: white;">LeftoverChef</span>
 </h1>
 """)
 
@@ -52,7 +59,14 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
-if st.button("Generate Recipes", type="primary") and (ingredients_input or uploaded_file):
+# === GENERATE BUTTON + TILTED CHEF'S HAT ===
+col1, col2 = st.columns([4, 1])
+with col1:
+    generate_clicked = st.button("Generate Recipes", type="primary")
+with col2:
+    st.markdown('<span class="chef-hat">👨‍🍳</span>', unsafe_allow_html=True)
+
+if generate_clicked and (ingredients_input or uploaded_file):
     with st.spinner("AI is creating recipes..."):
         detected = ""
         if uploaded_file and premium:
