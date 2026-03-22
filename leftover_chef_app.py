@@ -24,11 +24,11 @@ st.html("""
 </style>
 """)
 
-# === TITLE: Big pan again + full "L" visible ===
+# === TITLE: Big pan + underline now perfectly in the middle of the pan ===
 st.html("""
 <h1 style="font-size: 3.5rem; margin-bottom: 8px; text-align: center; position: relative;">
-  <span style="position: absolute; left: -45px; font-size: 5.5rem; top: -18px; opacity: 0.95;">🍳</span>
-  <span style="text-decoration: underline; text-decoration-color: #FFCC99; text-decoration-thickness: 3px; text-underline-offset: 12px; color: white;">LeftoverChef</span>
+  <span style="position: absolute; left: -45px; font-size: 5.5rem; top: -15px; opacity: 0.95;">🍳</span>
+  <span style="text-decoration: underline; text-decoration-color: #FFCC99; text-decoration-thickness: 3px; text-underline-offset: 8px; color: white;">LeftoverChef</span>
 </h1>
 """)
 
