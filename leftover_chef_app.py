@@ -24,10 +24,10 @@ st.html("""
 </style>
 """)
 
-# === TITLE: Big pan bleeding left edge + smaller text (no overlap on "L") ===
+# === TITLE: Big pan again + full "L" visible ===
 st.html("""
-<h1 style="font-size: 3.6rem; margin-bottom: 8px; text-align: center; position: relative;">
-  <span style="position: absolute; left: -42px; font-size: 5.5rem; top: -12px; opacity: 0.95;">🍳</span>
+<h1 style="font-size: 3.5rem; margin-bottom: 8px; text-align: center; position: relative;">
+  <span style="position: absolute; left: -45px; font-size: 5.5rem; top: -18px; opacity: 0.95;">🍳</span>
   <span style="text-decoration: underline; text-decoration-color: #FFCC99; text-decoration-thickness: 3px; text-underline-offset: 12px; color: white;">LeftoverChef</span>
 </h1>
 """)
