@@ -21,24 +21,20 @@ st.html("""
         background-color: #0A1F3D !important;
         color: white !important;
     }
-    .button-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: nowrap;
-    }
     .chef-hat {
         font-size: 42px;
         transform: rotate(15deg);
-        flex-shrink: 0;
+        margin-left: 6px;
+        display: inline-block;
+        vertical-align: middle;
     }
 </style>
 """)
 
-# === TITLE ===
+# === TITLE: Pan lowered a little (full "L" still shows) ===
 st.html("""
 <h1 style="font-size: 3.5rem; margin-bottom: 8px; text-align: center; position: relative;">
-  <span style="position: absolute; left: -45px; font-size: 5.5rem; top: -18px; opacity: 0.95;">🍳</span>
+  <span style="position: absolute; left: -45px; font-size: 5.5rem; top: -12px; opacity: 0.95;">🍳</span>
   <span style="text-decoration: underline; text-decoration-color: #FFCC99; text-decoration-thickness: 3px; text-underline-offset: 12px; color: white;">LeftoverChef</span>
 </h1>
 """)
@@ -63,13 +59,16 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
-# === GENERATE BUTTON + CHEF'S HAT (stays side-by-side on phone) ===
-st.markdown('<div class="button-row">', unsafe_allow_html=True)
-generate_clicked = st.button("Generate Recipes", type="primary")
-st.markdown('<span class="chef-hat">👨‍🍳</span></div>', unsafe_allow_html=True)
+# === GENERATE BUTTON + CHEF'S HAT ===
+col1, col2 = st.columns([5, 0.6])
+with col1:
+    generate_clicked = st.button("Generate Recipes", type="primary")
+with col2:
+    st.markdown('<span class="chef-hat">👨‍🍳</span>', unsafe_allow_html=True)
 
 if generate_clicked and (ingredients_input or uploaded_file):
     with st.spinner("AI is creating recipes..."):
+        # (the rest of the code is unchanged — photo detection, regular recipes, premium bonus, etc.)
         detected = ""
         if uploaded_file and premium:
             bytes_data = uploaded_file.getvalue()
@@ -88,7 +87,6 @@ if generate_clicked and (ingredients_input or uploaded_file):
         
         full_ingredients = detected + (ingredients_input or "")
         
-        # Regular recipes
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
         Add common staples (oil, salt, garlic, etc.) if needed.
         Separate sweet and savory clearly.
@@ -109,7 +107,6 @@ if generate_clicked and (ingredients_input or uploaded_file):
         st.subheader("🥇 Your Regular Recipes")
         st.markdown(recipes_text, unsafe_allow_html=True)
 
-        # Premium bonus
         if premium:
             extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions.
             Format EXACTLY like this:
@@ -128,7 +125,6 @@ if generate_clicked and (ingredients_input or uploaded_file):
             
             st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
             st.markdown(quick_text, unsafe_allow_html=True)
-            
             st.success("✅ Premium active — fridge photo + quick versions unlocked!")
 
 st.caption("Free tier = regular recipes. Premium = fridge photo + 5-min/microwave bonus add-ons. Ready for the $4.99/month subscription button?")
