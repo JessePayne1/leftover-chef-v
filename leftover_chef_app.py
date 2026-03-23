@@ -66,9 +66,9 @@ if generate_clicked and (ingredients_input or uploaded_file):
         
         full_ingredients = detected + (ingredients_input or "")
         
-        # Regular recipes (now guaranteed to show)
+        # Regular recipes
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
-        Add common staples (oil, salt, garlic, etc.) if needed. Separate sweet and savory clearly.
+        Add common staples (oil, salt, garlic, etc.) if needed. Separate sweet and savory.
         Return ONLY the formatted text for each recipe (no extra text):
 
         <h3 style="color: #FFCC99;">Recipe Title Here</h3>
@@ -83,21 +83,40 @@ if generate_clicked and (ingredients_input or uploaded_file):
         response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
         recipes_html = response.choices[0].message.content
         
-        st.subheader("🥇 Your Regular Recipes")
-        st.markdown('<div class="recipe-card">' + recipes_html.replace('\n', '<br>') + '</div>', unsafe_allow_html=True)
-
         # Premium bonus
         if premium:
             extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Use the exact same format."""
             quick_response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": extra_prompt}])
             quick_html = quick_response.choices[0].message.content
-            st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
-            st.markdown('<div class="recipe-card">' + quick_html.replace('\n', '<br>') + '</div>', unsafe_allow_html=True)
+        else:
+            quick_html = ""
 
-# === MY FAVORITES ===
-if premium and st.session_state.saved_recipes:
-    st.subheader("❤️ My Saved Recipe Cards")
-    for html in st.session_state.saved_recipes:
-        st.markdown(html, unsafe_allow_html=True)
+# === TABS ===
+tab1, tab2, tab3 = st.tabs(["🥇 Regular Recipes", "⚡ Premium Bonus: 5-Min & Microwave", "❤️ My Saved Recipe Cards"])
+
+with tab1:
+    st.markdown('<div class="recipe-card">' + recipes_html.replace('\n', '<br>') + '</div>', unsafe_allow_html=True)
+    if premium:
+        if st.button("💾 Save Regular Recipes to Favorites"):
+            st.session_state.saved_recipes.append(recipes_html)
+            st.success("Saved!")
+
+with tab2:
+    if premium and quick_html:
+        st.markdown('<div class="recipe-card">' + quick_html.replace('\n', '<br>') + '</div>', unsafe_allow_html=True)
+        if st.button("💾 Save Bonus Recipes to Favorites"):
+            st.session_state.saved_recipes.append(quick_html)
+            st.success("Saved!")
+    elif not premium:
+        st.info("🔓 Premium Mode needed for 5-min & microwave recipes")
+
+with tab3:
+    if premium and st.session_state.saved_recipes:
+        for html in st.session_state.saved_recipes:
+            st.markdown(html, unsafe_allow_html=True)
+    elif premium:
+        st.info("No saved recipes yet — save some from the other tabs!")
+    else:
+        st.info("🔓 Premium Mode needed for saved recipe cards")
 
 st.caption("Free tier = regular recipes. Premium = fridge photo + quick versions + saveable recipe cards. Ready for the $4.99/month subscription button?")
