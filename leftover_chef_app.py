@@ -35,7 +35,6 @@ premium = st.checkbox("🔓 Premium Mode — unlocks fridge photo + 5-min & micr
 
 client = OpenAI(api_key=st.session_state.get("api_key", ""))
 
-# Saved recipes storage
 if "saved_recipes" not in st.session_state:
     st.session_state.saved_recipes = []
 
@@ -67,10 +66,12 @@ if generate_clicked and (ingredients_input or uploaded_file):
         
         full_ingredients = detected + (ingredients_input or "")
         
+        # Regular recipes (peach cards)
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
-        Add common staples (oil, salt, garlic, etc.) if needed. Separate sweet and savory.
-        Return plain text with this exact format for each recipe:
+        Add common staples if needed. Separate sweet and savory.
+        Return ONLY the formatted HTML for each recipe (no extra text):
 
+        <div class="recipe-card">
         <h3 style="color: #FFCC99;">Recipe Title Here</h3>
         <strong style="font-size: 1.4rem;">Ingredients used:</strong>
         - list them here
@@ -78,26 +79,27 @@ if generate_clicked and (ingredients_input or uploaded_file):
         <strong style="font-size: 1.4rem;">Step-by-step instructions:</strong>
         1. First step...
         2. Second step...
-        3. etc."""
+        3. etc.
+        </div>"""
 
         response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
-        recipes_text = response.choices[0].message.content
+        recipes_html = response.choices[0].message.content
         
         st.subheader("🥇 Your Regular Recipes")
-        st.markdown(recipes_text, unsafe_allow_html=True)
+        st.markdown(recipes_html, unsafe_allow_html=True)
 
-        # Premium bonus
+        # Premium bonus (same peach cards)
         if premium:
-            extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Use the same exact format."""
+            extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Use the exact same HTML card format."""
             quick_response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": extra_prompt}])
-            quick_text = quick_response.choices[0].message.content
+            quick_html = quick_response.choices[0].message.content
             st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
-            st.markdown(quick_text, unsafe_allow_html=True)
+            st.markdown(quick_html, unsafe_allow_html=True)
 
-# === SAVED RECIPE CARDS (Premium only) ===
+# === SAVED RECIPE CARDS (Premium) ===
 if premium and st.session_state.saved_recipes:
     st.subheader("❤️ My Saved Recipe Cards")
-    for idx, rec in enumerate(st.session_state.saved_recipes):
-        st.markdown(f'<div class="recipe-card"><h3 style="color: #FFCC99;">{rec.get("title", "Saved Recipe")}</h3><strong style="font-size: 1.4rem;">Ingredients used:</strong><br>{rec.get("ingredients", "")}<br><br><strong style="font-size: 1.4rem;">Step-by-step instructions:</strong><br>{rec.get("steps", "")}</div>', unsafe_allow_html=True)
+    for idx, html in enumerate(st.session_state.saved_recipes):
+        st.markdown(html, unsafe_allow_html=True)
 
 st.caption("Free tier = regular recipes. Premium = fridge photo + quick versions + saveable recipe cards. Ready for the $4.99/month subscription button?")
