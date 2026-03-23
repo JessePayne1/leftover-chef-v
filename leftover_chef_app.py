@@ -68,10 +68,9 @@ if generate_clicked and (ingredients_input or uploaded_file):
         
         # Regular recipes (peach cards)
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
-        Add common staples if needed. Separate sweet and savory.
-        Return ONLY the formatted HTML for each recipe (no extra text):
+        Add common staples (oil, salt, garlic, etc.) if needed. Separate sweet and savory clearly.
+        Return ONLY plain text with this exact format for each recipe (no extra text):
 
-        <div class="recipe-card">
         <h3 style="color: #FFCC99;">Recipe Title Here</h3>
         <strong style="font-size: 1.4rem;">Ingredients used:</strong>
         - list them here
@@ -79,24 +78,23 @@ if generate_clicked and (ingredients_input or uploaded_file):
         <strong style="font-size: 1.4rem;">Step-by-step instructions:</strong>
         1. First step...
         2. Second step...
-        3. etc.
-        </div>"""
+        3. etc."""
 
         response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
         recipes_html = response.choices[0].message.content
         
         st.subheader("🥇 Your Regular Recipes")
-        st.markdown(recipes_html, unsafe_allow_html=True)
+        st.markdown('<div class="recipe-card">' + recipes_html.replace('\n', '<br>') + '</div>', unsafe_allow_html=True)
 
         # Premium bonus (same peach cards)
         if premium:
-            extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Use the exact same HTML card format."""
+            extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Use the exact same format."""
             quick_response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": extra_prompt}])
             quick_html = quick_response.choices[0].message.content
             st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
-            st.markdown(quick_html, unsafe_allow_html=True)
+            st.markdown('<div class="recipe-card">' + quick_html.replace('\n', '<br>') + '</div>', unsafe_allow_html=True)
 
-# === SAVED RECIPE CARDS (Premium) ===
+# === SAVED RECIPE CARDS ===
 if premium and st.session_state.saved_recipes:
     st.subheader("❤️ My Saved Recipe Cards")
     for idx, html in enumerate(st.session_state.saved_recipes):
