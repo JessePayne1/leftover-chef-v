@@ -1,7 +1,6 @@
 import streamlit as st
 from openai import OpenAI
 import base64
-import json
 
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
@@ -67,47 +66,38 @@ if generate_clicked and (ingredients_input or uploaded_file):
         
         full_ingredients = detected + (ingredients_input or "")
         
-        # Regular recipes
+        # Regular recipes (now guaranteed to show)
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
-        Add common staples if needed. Separate sweet and savory.
-        Return ONLY a JSON array like this: [{{"title": "Recipe Title", "ingredients": "item1, item2, item3", "steps": "1. First step...\\n2. Second step..."}}]"""
+        Add common staples (oil, salt, garlic, etc.) if needed. Separate sweet and savory clearly.
+        Return ONLY the formatted text for each recipe (no extra text):
+
+        <h3 style="color: #FFCC99;">Recipe Title Here</h3>
+        <strong style="font-size: 1.4rem;">Ingredients used:</strong>
+        – item1, – item2, – item3
+
+        <strong style="font-size: 1.4rem;">Step-by-step instructions:</strong>
+        1. First step...
+        2. Second step...
+        3. etc."""
 
         response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
-        try:
-            recipes_list = json.loads(response.choices[0].message.content)
-        except:
-            recipes_list = []
-
+        recipes_html = response.choices[0].message.content
+        
         st.subheader("🥇 Your Regular Recipes")
-        for i, rec in enumerate(recipes_list):
-            with st.container():
-                st.markdown(f'<div class="recipe-card"><h3 style="color: #FFCC99;">{rec.get("title", "Recipe")}</h3><strong style="font-size: 1.4rem;">Ingredients used:</strong><br>– {rec.get("ingredients", "").replace(", ", ", – ")}<br><br><strong style="font-size: 1.4rem;">Step-by-step instructions:</strong><br>{rec.get("steps", "")}</div>', unsafe_allow_html=True)
-                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{i}"):
-                    st.session_state.saved_recipes.append(rec)
-                    st.success("Saved to Favorites!")
+        st.markdown('<div class="recipe-card">' + recipes_html.replace('\n', '<br>') + '</div>', unsafe_allow_html=True)
 
         # Premium bonus
         if premium:
-            extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Return ONLY the same JSON array format."""
+            extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Use the exact same format."""
             quick_response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": extra_prompt}])
-            try:
-                quick_list = json.loads(quick_response.choices[0].message.content)
-            except:
-                quick_list = []
-            
+            quick_html = quick_response.choices[0].message.content
             st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
-            for i, rec in enumerate(quick_list):
-                with st.container():
-                    st.markdown(f'<div class="recipe-card"><h3 style="color: #FFCC99;">{rec.get("title", "Quick Version")}</h3><strong style="font-size: 1.4rem;">Ingredients used:</strong><br>– {rec.get("ingredients", "").replace(", ", ", – ")}<br><br><strong style="font-size: 1.4rem;">Step-by-step instructions:</strong><br>{rec.get("steps", "")}</div>', unsafe_allow_html=True)
-                    if st.button("💾 Save to Favorites", key=f"save_quick_{i}"):
-                        st.session_state.saved_recipes.append(rec)
-                        st.success("Saved to Favorites!")
+            st.markdown('<div class="recipe-card">' + quick_html.replace('\n', '<br>') + '</div>', unsafe_allow_html=True)
 
-# === MY FAVORITES (always at the bottom in Premium) ===
+# === MY FAVORITES ===
 if premium and st.session_state.saved_recipes:
     st.subheader("❤️ My Saved Recipe Cards")
-    for idx, rec in enumerate(st.session_state.saved_recipes):
-        with st.container():
-            st.markdown(f'<div class="recipe-card"><h3 style="color: #FFCC99;">{rec.get("title", "Saved Recipe")}</h3><strong style="font-size: 1.4rem;">Ingredients used:</strong><br>– {rec.get("ingredients", "").replace(", ", ", – ")}<br><br><strong style="font-size: 1.4rem;">Step-by-step instructions:</strong><br>{rec.get("steps", "")}</div>', unsafe_allow_html=True)
+    for html in st.session_state.saved_recipes:
+        st.markdown(html, unsafe_allow_html=True)
 
 st.caption("Free tier = regular recipes. Premium = fridge photo + quick versions + saveable recipe cards. Ready for the $4.99/month subscription button?")
