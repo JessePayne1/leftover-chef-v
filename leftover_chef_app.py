@@ -67,10 +67,10 @@ if generate_clicked and (ingredients_input or uploaded_file):
         
         full_ingredients = detected + (ingredients_input or "")
 
-        # STRICT JSON PROMPT
+        # Regular recipes
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
         Add common staples (oil, salt, garlic, etc.) if needed. Separate sweet and savory.
-        Return ONLY a valid JSON array like this (no extra text, no URLs, no code blocks):
+        Return ONLY a valid JSON array like this:
         [
           {{"title": "Recipe Title 1", "ingredients": "item1, item2, item3", "steps": "1. First step...\\n2. Second step...\\n3. etc."}},
           {{"title": "Recipe Title 2", "ingredients": "item1, item2", "steps": "1. First step...\\n2. Second step..."}},
@@ -81,7 +81,7 @@ if generate_clicked and (ingredients_input or uploaded_file):
         try:
             recipes_list = json.loads(response.choices[0].message.content)
         except:
-            recipes_list = [{"title": "Simple Pan-Fried Steak & Veggies", "ingredients": "steak, green pepper, rice, yogurt, chili, eggs", "steps": "1. Chop steak and pepper. 2. Fry in pan with chili. 3. Serve over rice with yogurt sauce."}]
+            recipes_list = []
 
         st.subheader("🥇 Your Regular Recipes")
         for i, rec in enumerate(recipes_list):
@@ -91,7 +91,7 @@ if generate_clicked and (ingredients_input or uploaded_file):
                     st.session_state.saved_recipes.append(rec)
                     st.success("Saved to Favorites!")
 
-        # Premium bonus
+        # Premium bonus - now identical format
         if premium:
             extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Return ONLY the same JSON array format."""
             quick_response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": extra_prompt}])
