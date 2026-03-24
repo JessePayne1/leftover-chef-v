@@ -66,12 +66,11 @@ if generate_clicked and (ingredients_input or uploaded_file):
         
         full_ingredients = detected + (ingredients_input or "")
 
-        # Simple, reliable prompt
+        # Regular recipes
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
         Add common staples (oil, salt, garlic, etc.) if needed. Separate sweet and savory.
-        Return ONLY the formatted text for each recipe (no extra text, no code blocks):
+        Return ONLY the formatted text for each recipe (no extra text):
 
-        ===RECIPE===
         <h3 style="color: #FFCC99;">Recipe Title Here</h3>
         <strong style="font-size: 1.4rem;">Ingredients used:</strong>
         – item1, – item2, – item3
@@ -79,36 +78,33 @@ if generate_clicked and (ingredients_input or uploaded_file):
         <strong style="font-size: 1.4rem;">Step-by-step instructions:</strong>
         1. First step...
         2. Second step...
-        3. etc.
-        ===RECIPE==="""
+        3. etc."""
 
         response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
         recipes_text = response.choices[0].message.content
         
-        # Split into individual cards
-        recipe_blocks = [block.strip() for block in recipes_text.split("===RECIPE===") if block.strip()]
-        
         st.subheader("🥇 Your Regular Recipes")
-        for i, block in enumerate(recipe_blocks):
-            if block:
-                st.markdown(f'<div class="recipe-card">{block}</div>', unsafe_allow_html=True)
-                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{i}"):
-                    st.session_state.saved_recipes.append(f'<div class="recipe-card">{block}</div>')
+        for block in recipes_text.split("<h3"):
+            if block.strip():
+                html_block = "<h3" + block
+                st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
+                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{len(st.session_state.saved_recipes)}"):
+                    st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                     st.success("Saved to Favorites!")
 
-        # Premium bonus
+        # Premium bonus - now identical format
         if premium:
-            extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Use the exact same ===RECIPE=== format."""
+            extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Use the exact same format as above."""
             quick_response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": extra_prompt}])
             quick_text = quick_response.choices[0].message.content
-            quick_blocks = [block.strip() for block in quick_text.split("===RECIPE===") if block.strip()]
             
             st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
-            for i, block in enumerate(quick_blocks):
-                if block:
-                    st.markdown(f'<div class="recipe-card">{block}</div>', unsafe_allow_html=True)
-                    if st.button("💾 Save to Favorites", key=f"save_quick_{i}"):
-                        st.session_state.saved_recipes.append(f'<div class="recipe-card">{block}</div>')
+            for block in quick_text.split("<h3"):
+                if block.strip():
+                    html_block = "<h3" + block
+                    st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
+                    if st.button("💾 Save to Favorites", key=f"save_quick_{len(st.session_state.saved_recipes)}"):
+                        st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                         st.success("Saved to Favorites!")
 
 # === MY FAVORITES ===
