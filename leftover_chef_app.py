@@ -84,11 +84,11 @@ if generate_clicked and (ingredients_input or uploaded_file):
         recipes_text = response.choices[0].message.content
         
         st.subheader("🥇 Your Regular Recipes")
-        for block in recipes_text.split("<h3"):
+        for i, block in enumerate(recipes_text.split("<h3")):
             if block.strip():
                 html_block = "<h3" + block
                 st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{len(st.session_state.saved_recipes)}"):
+                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{i}_{len(st.session_state.saved_recipes)}"):
                     st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                     st.success("Saved to Favorites!")
 
@@ -98,11 +98,11 @@ if generate_clicked and (ingredients_input or uploaded_file):
             quick_response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": extra_prompt}])
             quick_text = quick_response.choices[0].message.content
             st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
-            for block in quick_text.split("<h3"):
+            for i, block in enumerate(quick_text.split("<h3")):
                 if block.strip():
                     html_block = "<h3" + block
                     st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                    if st.button("💾 Save to Favorites", key=f"save_quick_{len(st.session_state.saved_recipes)}"):
+                    if st.button("💾 Save to Favorites", key=f"save_quick_{i}_{len(st.session_state.saved_recipes)}"):
                         st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                         st.success("Saved to Favorites!")
 
