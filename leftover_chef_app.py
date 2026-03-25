@@ -66,7 +66,7 @@ if generate_clicked and (ingredients_input or uploaded_file):
         
         full_ingredients = detected + (ingredients_input or "")
 
-        # Regular recipes
+        # Regular recipes - individual cards
         prompt = f"""Create 2-3 practical zero-waste recipes using as many of these ingredients as possible: {full_ingredients}.
         Add common staples (oil, salt, garlic, etc.) if needed. Separate sweet and savory.
         Return ONLY the formatted text for each recipe (no extra text):
@@ -92,7 +92,7 @@ if generate_clicked and (ingredients_input or uploaded_file):
                     st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                     st.success("Saved to Favorites!")
 
-        # Premium bonus - peach titles + individual cards
+        # Premium bonus - individual peach cards with save buttons
         if premium:
             extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Use the exact same format."""
             quick_response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": extra_prompt}])
