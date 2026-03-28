@@ -59,7 +59,7 @@ if generate_clicked and (ingredients_input or uploaded_file):
             bytes_data = uploaded_file.getvalue()
             base64_image = base64.b64encode(bytes_data).decode()
             vision_response = client.chat.completions.create(
-                model="gpt-4o",
+                model="gpt-4o-mini",
                 messages=[{"role": "user", "content": [{"type": "text", "text": "List every visible food item as a comma-separated list."}, {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}}]}]
             )
             detected = vision_response.choices[0].message.content + ", "
@@ -80,29 +80,29 @@ if generate_clicked and (ingredients_input or uploaded_file):
         2. Second step...
         3. etc."""
 
-        response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt}])
+        response = client.chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": prompt}])
         recipes_text = response.choices[0].message.content
         
         st.subheader("🥇 Your Regular Recipes")
-        for block in recipes_text.split("<h3"):
+        for i, block in enumerate(recipes_text.split("<h3")):
             if block.strip():
                 html_block = "<h3" + block
                 st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{i}_{len(st.session_state.saved_recipes)}"):
+                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{i}"):
                     st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                     st.success("Saved to Favorites!")
 
-        # Premium bonus - individual peach cards
+        # Premium bonus
         if premium:
             extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Use the exact same format."""
-            quick_response = client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": extra_prompt}])
+            quick_response = client.chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": extra_prompt}])
             quick_text = quick_response.choices[0].message.content
             st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
-            for block in quick_text.split("<h3"):
+            for i, block in enumerate(quick_text.split("<h3")):
                 if block.strip():
                     html_block = "<h3" + block
                     st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                    if st.button("💾 Save to Favorites", key=f"save_quick_{i}_{len(st.session_state.saved_recipes)}"):
+                    if st.button("💾 Save to Favorites", key=f"save_quick_{i}"):
                         st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                         st.success("Saved to Favorites!")
 
