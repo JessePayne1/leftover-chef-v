@@ -45,6 +45,12 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
+# === STRIPE SUBSCRIPTION BUTTON ===
+if not premium:
+    if st.button("⭐ Upgrade to Premium - $4.99/month", type="primary"):
+        st.info("Stripe Checkout coming soon — replace with your real Stripe link in the code.")
+        # TODO: Replace with real Stripe Checkout URL once set up
+
 # === GENERATE BUTTON + CHEF'S HAT ===
 col1, col2 = st.columns([5, 0.6])
 with col1:
@@ -84,11 +90,11 @@ if generate_clicked and (ingredients_input or uploaded_file):
         recipes_text = response.choices[0].message.content
         
         st.subheader("🥇 Your Regular Recipes")
-        for i, block in enumerate(recipes_text.split("<h3")):
+        for block in recipes_text.split("<h3"):
             if block.strip():
                 html_block = "<h3" + block
                 st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{i}"):
+                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{len(st.session_state.saved_recipes)}"):
                     st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                     st.success("Saved to Favorites!")
 
@@ -98,11 +104,11 @@ if generate_clicked and (ingredients_input or uploaded_file):
             quick_response = client.chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": extra_prompt}])
             quick_text = quick_response.choices[0].message.content
             st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
-            for i, block in enumerate(quick_text.split("<h3")):
+            for block in quick_text.split("<h3"):
                 if block.strip():
                     html_block = "<h3" + block
                     st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                    if st.button("💾 Save to Favorites", key=f"save_quick_{i}"):
+                    if st.button("💾 Save to Favorites", key=f"save_quick_{len(st.session_state.saved_recipes)}"):
                         st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                         st.success("Saved to Favorites!")
 
@@ -112,4 +118,4 @@ if premium and st.session_state.saved_recipes:
     for html in st.session_state.saved_recipes:
         st.markdown(html, unsafe_allow_html=True)
 
-st.caption("Free tier = regular recipes. Premium = fridge photo + quick versions + saveable recipe cards. Ready for the $4.99/month subscription button?")
+st.caption("Free tier = regular recipes. Premium = fridge photo + quick versions + saveable recipe cards.")
