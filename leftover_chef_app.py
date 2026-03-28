@@ -28,8 +28,7 @@ st.markdown("**Turn any leftovers into real meals** — AI finds smart combos us
 # Sidebar
 with st.sidebar:
     api_key = st.text_input("OpenAI API Key", type="password", value=st.session_state.get("api_key", ""))
-    if api_key: 
-        st.session_state.api_key = api_key
+    if api_key: st.session_state.api_key = api_key
     st.caption("Your credits are ready!")
 
 premium = st.checkbox("🔓 Premium Mode — unlocks fridge photo + 5-min & microwave BONUS versions + Saveable Recipe Cards", value=False)
@@ -85,11 +84,11 @@ if generate_clicked and (ingredients_input or uploaded_file):
         recipes_text = response.choices[0].message.content
         
         st.subheader("🥇 Your Regular Recipes")
-        for block in recipes_text.split("<h3"):
+        for i, block in enumerate(recipes_text.split("<h3")):
             if block.strip():
                 html_block = "<h3" + block
                 st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{len(st.session_state.saved_recipes)}"):
+                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{i}"):
                     st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                     st.success("Saved to Favorites!")
 
@@ -99,15 +98,15 @@ if generate_clicked and (ingredients_input or uploaded_file):
             quick_response = client.chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": extra_prompt}])
             quick_text = quick_response.choices[0].message.content
             st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
-            for block in quick_text.split("<h3"):
+            for i, block in enumerate(quick_text.split("<h3")):
                 if block.strip():
                     html_block = "<h3" + block
                     st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                    if st.button("💾 Save to Favorites", key=f"save_quick_{len(st.session_state.saved_recipes)}"):
+                    if st.button("💾 Save to Favorites", key=f"save_quick_{i}"):
                         st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                         st.success("Saved to Favorites!")
 
-# === MY FAVORITES ===
+# MY FAVORITES
 if premium and st.session_state.saved_recipes:
     st.subheader("❤️ My Saved Recipe Cards")
     for html in st.session_state.saved_recipes:
