@@ -4,7 +4,7 @@ import base64
 
 st.set_page_config(page_title="LeftoverChef", layout="wide", page_icon="🍳")
 
-# === STYLING ===
+# STYLING
 st.html("""
 <style>
     .stButton>button { background-color: #48D1CC !important; color: white !important; font-size: 18px !important; padding: 14px 28px !important; border-radius: 10px !important; }
@@ -15,7 +15,7 @@ st.html("""
 </style>
 """)
 
-# === TITLE ===
+# TITLE
 st.html("""
 <h1 style="font-size: 3.5rem; margin-bottom: 8px; text-align: center; position: relative;">
   <span style="position: absolute; left: -45px; font-size: 5.5rem; top: -12px; opacity: 0.95;">🍳</span>
@@ -28,7 +28,8 @@ st.markdown("**Turn any leftovers into real meals** — AI finds smart combos us
 # Sidebar
 with st.sidebar:
     api_key = st.text_input("OpenAI API Key", type="password", value=st.session_state.get("api_key", ""))
-    if api_key: st.session_state.api_key = api_key
+    if api_key: 
+        st.session_state.api_key = api_key
     st.caption("Your credits are ready!")
 
 premium = st.checkbox("🔓 Premium Mode — unlocks fridge photo + 5-min & microwave BONUS versions + Saveable Recipe Cards", value=False)
@@ -45,13 +46,7 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
-# === STRIPE SUBSCRIPTION BUTTON ===
-if not premium:
-    if st.button("⭐ Upgrade to Premium - $4.99/month", type="primary"):
-        st.info("Stripe Checkout coming soon — replace with your real Stripe link in the code.")
-        # TODO: Replace with real Stripe Checkout URL once set up
-
-# === GENERATE BUTTON + CHEF'S HAT ===
+# GENERATE BUTTON + CHEF'S HAT
 col1, col2 = st.columns([5, 0.6])
 with col1:
     generate_clicked = st.button("Generate Recipes", type="primary")
