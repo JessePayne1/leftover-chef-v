@@ -46,13 +46,16 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
-# === STRIPE UPGRADE BUTTON ===
+# === REAL STRIPE UPGRADE BUTTON ===
 if not premium:
     if st.button("⭐ Upgrade to Premium - $4.99/month", type="primary"):
-        # Replace this with your real Stripe Checkout URL after testing
-        # You can generate it in Stripe Dashboard → Products → Your product → Create checkout link
-        checkout_url = "https://buy.stripe.com/your_real_checkout_link_here"  
-        st.markdown(f'<a href="{checkout_url}" target="_blank"><button class="upgrade-btn">Proceed to Secure Payment</button></a>', unsafe_allow_html=True)
+        st.markdown(f'''
+        <a href="https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00" target="_blank">
+            <button style="background-color:#FFCC99; color:#0A1F3D; font-weight:bold; padding:16px 32px; border:none; border-radius:10px; font-size:18px; cursor:pointer;">
+                Proceed to Secure Payment - $4.99/month
+            </button>
+        </a>
+        ''', unsafe_allow_html=True)
 
 # === GENERATE BUTTON + CHEF'S HAT ===
 col1, col2 = st.columns([5, 0.6])
