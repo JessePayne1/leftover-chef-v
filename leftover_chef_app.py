@@ -12,7 +12,6 @@ st.html("""
     body, .stApp { background-color: #0A1F3D !important; color: white !important; }
     .chef-hat { font-size: 42px; transform: rotate(15deg); margin-left: 6px; }
     .recipe-card { background-color: #112B4D; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #FFCC99; }
-    .upgrade-btn { background-color: #FFCC99 !important; color: #0A1F3D !important; font-weight: bold !important; font-size: 18px !important; }
 </style>
 """)
 
@@ -46,15 +45,7 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
-# === REAL STRIPE UPGRADE BUTTON ===
-if not premium:
-    if st.button("⭐ Upgrade to Premium - $4.99/month", type="primary"):
-        # Replace this with your real Stripe Checkout URL after testing
-        # You can generate it in Stripe Dashboard → Products → Your product → Price → "Create checkout link"
-        checkout_url = "https://buy.stripe.com/your_real_checkout_link_here"  
-        st.markdown(f'<a href="{checkout_url}" target="_blank"><button class="upgrade-btn">Proceed to Secure Payment</button></a>', unsafe_allow_html=True)
-
-# === GENERATE BUTTON + CHEF'S HAT ===
+# GENERATE BUTTON + CHEF'S HAT
 col1, col2 = st.columns([5, 0.6])
 with col1:
     generate_clicked = st.button("Generate Recipes", type="primary")
@@ -93,11 +84,11 @@ if generate_clicked and (ingredients_input or uploaded_file):
         recipes_text = response.choices[0].message.content
         
         st.subheader("🥇 Your Regular Recipes")
-        for block in recipes_text.split("<h3"):
+        for i, block in enumerate(recipes_text.split("<h3")):
             if block.strip():
                 html_block = "<h3" + block
                 st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{len(st.session_state.saved_recipes)}"):
+                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{i}_{len(st.session_state.saved_recipes)}"):
                     st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                     st.success("Saved to Favorites!")
 
@@ -107,11 +98,11 @@ if generate_clicked and (ingredients_input or uploaded_file):
             quick_response = client.chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": extra_prompt}])
             quick_text = quick_response.choices[0].message.content
             st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
-            for block in quick_text.split("<h3"):
+            for i, block in enumerate(quick_text.split("<h3")):
                 if block.strip():
                     html_block = "<h3" + block
                     st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                    if st.button("💾 Save to Favorites", key=f"save_quick_{len(st.session_state.saved_recipes)}"):
+                    if st.button("💾 Save to Favorites", key=f"save_quick_{i}_{len(st.session_state.saved_recipes)}"):
                         st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                         st.success("Saved to Favorites!")
 
