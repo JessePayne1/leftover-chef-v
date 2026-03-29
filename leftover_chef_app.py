@@ -35,7 +35,6 @@ premium = st.checkbox("🔓 Premium Mode — unlocks fridge photo + 5-min & micr
 
 client = OpenAI(api_key=st.session_state.get("api_key", ""))
 
-# Persistent saved recipes
 if "saved_recipes" not in st.session_state:
     st.session_state.saved_recipes = []
 
@@ -85,11 +84,11 @@ if generate_clicked and (ingredients_input or uploaded_file):
         recipes_text = response.choices[0].message.content
         
         st.subheader("🥇 Your Regular Recipes")
-        for i, block in enumerate(recipes_text.split("<h3")):
+        for block in recipes_text.split("<h3"):
             if block.strip():
                 html_block = "<h3" + block
                 st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{i}"):
+                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{len(st.session_state.saved_recipes)}"):
                     st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                     st.success("Saved to Favorites!")
 
@@ -103,17 +102,15 @@ if generate_clicked and (ingredients_input or uploaded_file):
                 if block.strip():
                     html_block = "<h3" + block
                     st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                    if st.button("💾 Save to Favorites", key=f"save_quick_{i}"):
+                    if st.button("💾 Save to Favorites", key=f"save_quick_{len(st.session_state.saved_recipes)}"):
                         st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                         st.success("Saved to Favorites!")
 
-# MY FAVORITES - always visible in Premium
-if premium:
+# MY FAVORITES
+if premium and st.session_state.saved_recipes:
     st.subheader("❤️ My Saved Recipe Cards")
-    if st.session_state.saved_recipes:
-        for html in st.session_state.saved_recipes:
-            st.markdown(html, unsafe_allow_html=True)
-    else:
-        st.info("No saved recipes yet. Generate recipes and tap 'Save to Favorites' on any card.")
+    for html in st.session_state.saved_recipes:
+        st.markdown(html, unsafe_allow_html=True)
 
-st.caption("Free tier = regular recipes. Premium = fridge photo + quick versions + saveable recipe cards.")
+# UPDATED CAPTION WITH BOLD PEACH
+st.markdown('<p style="color: #FFCC99; font-weight: bold;">Free tier = regular recipes. Premium = fridge photo + quick versions + saveable recipe cards.</p>', unsafe_allow_html=True)
