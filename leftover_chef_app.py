@@ -12,7 +12,7 @@ st.html("""
     body, .stApp { background-color: #0A1F3D !important; color: white !important; }
     .chef-hat { font-size: 42px; transform: rotate(15deg); margin-left: 6px; }
     .recipe-card { background-color: #112B4D; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 2px solid #FFCC99; }
-    .upgrade-button { background-color: #FFCC99 !important; color: #0A1F3D !important; font-weight: bold !important; }
+    .upgrade-btn { background-color: #FFCC99 !important; color: #0A1F3D !important; font-weight: bold !important; }
 </style>
 """)
 
@@ -46,10 +46,12 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
-# === STRIPE UPGRADE BUTTON ===
+# === STRIPE UPGRADE BUTTON (Real) ===
 if not premium:
     if st.button("⭐ Upgrade to Premium - $4.99/month", type="primary"):
-        st.info("🔄 Stripe Checkout coming soon — replace the placeholder with your real Stripe link in the code.")
+        # Replace this URL with your real Stripe Checkout link once you test it
+        stripe_checkout_url = "https://buy.stripe.com/your_real_checkout_link"  
+        st.markdown(f"[Proceed to Stripe Payment]({stripe_checkout_url})", unsafe_allow_html=True)
 
 # === GENERATE BUTTON + CHEF'S HAT ===
 col1, col2 = st.columns([5, 0.6])
