@@ -45,22 +45,14 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
-# STRIPE UPGRADE BUTTON
-if not premium:
-    if st.button("⭐ Upgrade to Premium - $4.99/month", type="primary"):
-        st.markdown(f'''
-        <a href="https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00" target="_blank">
-            <button style="background-color:#FFCC99; color:#0A1F3D; font-weight:bold; padding:16px 32px; border:none; border-radius:10px; font-size:18px; cursor:pointer;">
-                Proceed to Secure Payment
-            </button>
-        </a>
-        ''', unsafe_allow_html=True)
-
-# GENERATE BUTTON + CHEF'S HAT
-col1, col2 = st.columns([5, 0.6])
+# VIEW SAVED BUTTON + GENERATE
+col1, col2, col3 = st.columns([4, 1, 0.6])
 with col1:
     generate_clicked = st.button("Generate Recipes", type="primary")
 with col2:
+    if premium and st.button("❤️ View Saved"):
+        pass  # This will trigger the saved section below
+with col3:
     st.markdown('<span class="chef-hat">👨‍🍳</span>', unsafe_allow_html=True)
 
 if generate_clicked and (ingredients_input or uploaded_file):
@@ -109,7 +101,7 @@ if generate_clicked and (ingredients_input or uploaded_file):
             quick_response = client.chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": extra_prompt}])
             quick_text = quick_response.choices[0].message.content
             st.subheader("⚡ Premium Bonus: 5-Min & Microwave Versions")
-            for i, block in enumerate(quick_text.split("<h3")):
+            for block in quick_text.split("<h3"):
                 if block.strip():
                     html_block = "<h3" + block
                     st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
@@ -117,10 +109,13 @@ if generate_clicked and (ingredients_input or uploaded_file):
                         st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                         st.success("Saved to Favorites!")
 
-# MY FAVORITES
-if premium and st.session_state.saved_recipes:
+# VIEW SAVED SECTION
+if premium:
     st.subheader("❤️ My Saved Recipe Cards")
-    for html in st.session_state.saved_recipes:
-        st.markdown(html, unsafe_allow_html=True)
+    if st.session_state.saved_recipes:
+        for html in st.session_state.saved_recipes:
+            st.markdown(html, unsafe_allow_html=True)
+    else:
+        st.info("No saved recipes yet. Generate some recipes and tap 'Save to Favorites'.")
 
 st.caption("Free tier = regular recipes. Premium = fridge photo + quick versions + saveable recipe cards.")
