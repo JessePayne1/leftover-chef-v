@@ -35,6 +35,7 @@ premium = st.checkbox("🔓 Premium Mode — unlocks fridge photo + 5-min & micr
 
 client = OpenAI(api_key=st.session_state.get("api_key", ""))
 
+# Persistent saved recipes
 if "saved_recipes" not in st.session_state:
     st.session_state.saved_recipes = []
 
@@ -45,14 +46,11 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
-# VIEW SAVED BUTTON + GENERATE
-col1, col2, col3 = st.columns([4, 1, 0.6])
+# GENERATE BUTTON + CHEF'S HAT
+col1, col2 = st.columns([5, 0.6])
 with col1:
     generate_clicked = st.button("Generate Recipes", type="primary")
 with col2:
-    if premium and st.button("❤️ View Saved"):
-        pass  # This will trigger the saved section below
-with col3:
     st.markdown('<span class="chef-hat">👨‍🍳</span>', unsafe_allow_html=True)
 
 if generate_clicked and (ingredients_input or uploaded_file):
@@ -91,7 +89,7 @@ if generate_clicked and (ingredients_input or uploaded_file):
             if block.strip():
                 html_block = "<h3" + block
                 st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{i}_{len(st.session_state.saved_recipes)}"):
+                if premium and st.button("💾 Save to Favorites", key=f"save_reg_{i}"):
                     st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                     st.success("Saved to Favorites!")
 
@@ -105,17 +103,17 @@ if generate_clicked and (ingredients_input or uploaded_file):
                 if block.strip():
                     html_block = "<h3" + block
                     st.markdown(f'<div class="recipe-card">{html_block}</div>', unsafe_allow_html=True)
-                    if st.button("💾 Save to Favorites", key=f"save_quick_{i}_{len(st.session_state.saved_recipes)}"):
+                    if st.button("💾 Save to Favorites", key=f"save_quick_{i}"):
                         st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                         st.success("Saved to Favorites!")
 
-# VIEW SAVED SECTION
+# MY FAVORITES - always visible in Premium
 if premium:
     st.subheader("❤️ My Saved Recipe Cards")
     if st.session_state.saved_recipes:
         for html in st.session_state.saved_recipes:
             st.markdown(html, unsafe_allow_html=True)
     else:
-        st.info("No saved recipes yet. Generate some recipes and tap 'Save to Favorites'.")
+        st.info("No saved recipes yet. Generate recipes and tap 'Save to Favorites' on any card.")
 
 st.caption("Free tier = regular recipes. Premium = fridge photo + quick versions + saveable recipe cards.")
