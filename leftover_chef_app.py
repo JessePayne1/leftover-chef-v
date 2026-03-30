@@ -45,6 +45,17 @@ if premium:
 ingredients_input = st.text_input("Or type your ingredients:", 
                                  placeholder="steak, yogurt, rice, eggs, chili, green pepper")
 
+# STRIPE UPGRADE BUTTON
+if not premium:
+    if st.button("⭐ Upgrade to Premium - $4.99/month", type="primary"):
+        st.markdown(f'''
+        <a href="https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00" target="_blank">
+            <button style="background-color:#FFCC99; color:#0A1F3D; font-weight:bold; padding:16px 32px; border:none; border-radius:10px; font-size:18px; cursor:pointer;">
+                Proceed to Secure Payment
+            </button>
+        </a>
+        ''', unsafe_allow_html=True)
+
 # GENERATE BUTTON + CHEF'S HAT
 col1, col2 = st.columns([5, 0.6])
 with col1:
@@ -92,7 +103,7 @@ if generate_clicked and (ingredients_input or uploaded_file):
                     st.session_state.saved_recipes.append(f'<div class="recipe-card">{html_block}</div>')
                     st.success("Saved to Favorites!")
 
-        # Premium bonus
+        # Premium bonus with bold peach titles
         if premium:
             extra_prompt = f"""For the same ingredients ({full_ingredients}), create quick 5-minute or microwave-only versions. Use the exact same format."""
             quick_response = client.chat.completions.create(model="gpt-4o-mini", messages=[{"role": "user", "content": extra_prompt}])
@@ -112,4 +123,5 @@ if premium and st.session_state.saved_recipes:
     for html in st.session_state.saved_recipes:
         st.markdown(html, unsafe_allow_html=True)
 
-st.caption("Free tier = regular recipes. Premium = fridge photo + quick versions + saveable recipe cards.")
+# FREE TIER + PREMIUM CAPTION - BOLD PEACH
+st.markdown('<p style="color: #FFCC99; font-weight: bold;">Free tier = regular recipes. Premium = fridge photo + quick versions + saveable recipe cards.</p>', unsafe_allow_html=True)
