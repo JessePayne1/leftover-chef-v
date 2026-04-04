@@ -47,20 +47,15 @@ if st.session_state.user is None:
     st.markdown("**Premium** unlocks your personal saved meals library.")
 
     # Big turquoise button → directly opens Stripe Checkout
+        # Big turquoise button → directly opens Stripe Checkout
     if st.button("🚀 Sign Up for Premium – Unlock Saved Meals", type="primary", use_container_width=True):
-        stripe_publishable_key = st.secrets["stripe"]["PUBLISHABLE_KEY"]
+        checkout_url = "https://https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"   # ← CHANGE THIS TO YOUR STRIPE LINK
         
-        # Simple redirect to your Stripe Checkout link (easiest method)
-        # Replace this URL with your actual Stripe Payment Link or Checkout Session URL
-        checkout_url = "https://buy.stripe.com/https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"   # ← CHANGE THIS
-        
-        # Optional: Use st.markdown with unsafe_allow_html for a cleaner redirect
         st.markdown(f"""
             <meta http-equiv="refresh" content="0; url={checkout_url}">
         """, unsafe_allow_html=True)
         
         st.success("Redirecting to secure Stripe checkout...")
-
     # Login option
     if st.button("🔑 Already have an account? Login"):
         st.session_state.show_login = True
@@ -96,10 +91,13 @@ else:
             st.info("Your saved meals will appear here (coming next)")
     else:
         st.warning("🔒 Free Account")
-        if st.button("Upgrade to Premium Now", type="primary"):
-            # Reuse the same Stripe redirect logic
-            checkout_url = "https://buy.stripe.com/https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"   # ← CHANGE THIS
-            st.markdown(f'<meta http-equiv="refresh" content="0; url={checkout_url}">', unsafe_allow_html=True)
-            st.success("Redirecting to Stripe...")
-
+            # Big turquoise button → directly opens Stripe Checkout
+    if st.button("🚀 Sign Up for Premium – Unlock Saved Meals", type="primary", use_container_width=True):
+        checkout_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"   # ← CHANGE THIS TO YOUR STRIPE LINK
+        
+        st.markdown(f"""
+            <meta http-equiv="refresh" content="0; url={checkout_url}">
+        """, unsafe_allow_html=True)
+        
+        st.success("Redirecting to secure Stripe checkout...")
 st.caption("LeftoverChef — Leftovers never tasted so good 🍽️")
