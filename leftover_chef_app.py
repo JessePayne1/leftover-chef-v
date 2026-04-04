@@ -47,7 +47,7 @@ with col2:
 with col3:
     st.image("https://via.placeholder.com/200x150/FFCC99/000000?text=👨‍🍳+Chef", use_column_width=True)
 
-st.title("🍽️ LeftoverChef")
+st.title("🍳 LeftoverChef")
 st.markdown('<p class="highlight">Turn your leftovers into delicious meals</p>', unsafe_allow_html=True)
 
 if st.session_state.user is None:
@@ -55,7 +55,7 @@ if st.session_state.user is None:
     st.markdown("### Save your favorite meals for days or weeks later?")
 
     # Clean turquoise Stripe button (no red!)
-    stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"  # ← Replace with your real Stripe link
+    stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"  # ← Replace with your real Stripe link
     st.link_button("🚀 Sign Up for Premium – Unlock Saved Meals", stripe_url, use_container_width=True)
 
     # Login option
@@ -99,7 +99,7 @@ else:
             st.info("Your saved meals library coming soon")
     else:
         st.warning("🔒 Free Account")
-        stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"  # ← Same real Stripe link
-        st.link_button("Upgrade to Premium Now", stripe_url, use_container_width=True)
+        stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"
+        Upgrade to Premium Now", stripe_url, use_container_width=True)
 
 # No bottom caption here anymore
