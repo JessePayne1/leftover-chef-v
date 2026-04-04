@@ -3,21 +3,28 @@ from st_supabase_connection import SupabaseConnection
 
 st.set_page_config(page_title="LeftoverChef", page_icon="🍳", layout="centered")
 
-# Dark blue background + peach accents for title/key words
+# Dark blue background + peach title + turquoise buttons with red outline
 st.markdown("""
     <style>
     .stApp { background-color: #0a2540; color: white; }
-    h1 { color: #ffcc99 !important; }  /* Peach for title */
+    h1 { color: #ffcc99 !important; }           /* Peach for title */
     .highlight { color: #ffcc99; font-weight: bold; }
-    .stButton>button { 
-        background-color: #00d4ff; 
-        color: black; 
-        font-weight: bold; 
-        border-radius: 8px;
-        padding: 0.8rem 1.5rem;
-        font-size: 1.1rem;
+    
+    /* Turquoise button with nice red outline */
+    .stLinkButton > a {
+        background-color: #00d4ff !important;
+        color: black !important;
+        font-weight: bold !important;
+        border: 3px solid #ff4d4d !important;   /* Red outline */
+        border-radius: 10px !important;
+        padding: 0.9rem 1.6rem !important;
+        font-size: 1.15rem !important;
+        box-shadow: 0 4px 8px rgba(255, 77, 77, 0.3) !important;
     }
-    .stButton>button:hover { background-color: #00b8e0; }
+    .stLinkButton > a:hover {
+        background-color: #00b8e0 !important;
+        border-color: #ff6666 !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -29,8 +36,10 @@ if "is_premium" not in st.session_state:
     st.session_state.is_premium = False
 
 # ====================== IMAGES ======================
-st.image("https://via.placeholder.com/800x300/FFCC99/000000?text=🍳+Frying+Pan+with+Eggs", use_column_width=True)  # Big frying pan with eggs at top
+# Big frying pan with eggs at the top
+st.image("https://via.placeholder.com/800x300/FFCC99/000000?text=🍳+Frying+Pan+with+Eggs", use_column_width=True)
 
+# Three small images
 col1, col2, col3 = st.columns(3, gap="small")
 with col1:
     st.image("https://via.placeholder.com/200x150/FFCC99/000000?text=🍑+Peach", use_column_width=True)
@@ -43,14 +52,14 @@ st.title("🍽️ LeftoverChef")
 st.markdown('<p class="highlight">Turn your leftovers into delicious meals</p>', unsafe_allow_html=True)
 
 if st.session_state.user is None:
-    # ================== HOME / LANDING PAGE ==================
+    # ================== HOME PAGE ==================
     st.markdown("### Save your favorite meals for days or weeks later?")
 
-    # Big turquoise premium button — now directly links to Stripe
-    stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"  # ← Replace with your actual Stripe link
-    st.link_button("🚀 Sign Up for Premium – Unlock Saved Meals", stripe_url, use_container_width=True, type="primary")
+    # Turquoise button with red outline → Stripe
+    stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"  # ← Replace with your real Stripe link
+    st.link_button("🚀 Sign Up for Premium – Unlock Saved Meals", stripe_url, use_container_width=True)
 
-    # Smaller login option
+    # Login option
     if st.button("🔑 Already have an account? Login"):
         st.session_state.show_login = True
         st.rerun()
@@ -68,8 +77,11 @@ if st.session_state.user is None:
             except Exception as e:
                 st.error(f"Login failed: {str(e)}")
 
-    # Little chef icon under the buttons
-    st.image("https://via.placeholder.com/150x150/FFCC99/000000?text=👨‍🍳+Chef", use_column_width=False)
+    # Little chef icon clearly under the buttons
+    st.image("https://via.placeholder.com/180x180/FFCC99/000000?text=👨‍🍳+Chef", use_column_width=False)
+
+    # Centered caption
+    st.markdown('<p style="text-align: center; color: #ffcc99; font-size: 1.1rem;">Leftovers never tasted so good 🍽️</p>', unsafe_allow_html=True)
 
 else:
     # ================== LOGGED-IN VIEW ==================
@@ -88,7 +100,5 @@ else:
             st.info("Your saved meals library coming soon")
     else:
         st.warning("🔒 Free Account")
-        stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"  # ← Same Stripe link
-        st.link_button("Upgrade to Premium Now", stripe_url, use_container_width=True, type="primary")
-
-st.caption("LeftoverChef — Leftovers never tasted so good 🍽️")
+        stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"  # ← Same real Stripe link
+        st.link_button("Upgrade to Premium Now", stripe_url, use_container_width=True)
