@@ -47,7 +47,7 @@ if st.session_state.user is None:
     st.markdown("### Save your favorite meals for days or weeks later?")
 
     # Big turquoise premium button — now directly links to Stripe
-    stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"  # ← Replace with your actual Stripe link
+    stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"  # ← Replace with your actual Stripe link
     st.link_button("🚀 Sign Up for Premium – Unlock Saved Meals", stripe_url, use_container_width=True, type="primary")
 
     # Smaller login option
@@ -88,7 +88,7 @@ else:
             st.info("Your saved meals library coming soon")
     else:
         st.warning("🔒 Free Account")
-        stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"  # ← Same Stripe link
+        stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"  # ← Same Stripe link
         st.link_button("Upgrade to Premium Now", stripe_url, use_container_width=True, type="primary")
 
 st.caption("LeftoverChef — Leftovers never tasted so good 🍽️")
