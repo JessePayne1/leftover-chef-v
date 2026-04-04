@@ -52,7 +52,7 @@ if st.session_state.user is None:
         
         # Simple redirect to your Stripe Checkout link (easiest method)
         # Replace this URL with your actual Stripe Payment Link or Checkout Session URL
-        checkout_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"   # ← CHANGE THIS
+        checkout_url = "https://https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"   # ← CHANGE THIS
         
         # Optional: Use st.markdown with unsafe_allow_html for a cleaner redirect
         st.markdown(f"""
@@ -98,8 +98,7 @@ else:
         st.warning("🔒 Free Account")
         if st.button("Upgrade to Premium Now", type="primary"):
             # Reuse the same Stripe redirect logic
-            checkout_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"   # ← CHANGE THIS
+            checkout_url = "https://https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"  # ← CHANGE THIS
             st.markdown(f'<meta http-equiv="refresh" content="0; url={checkout_url}">', unsafe_allow_html=True)
-            st.success("Redirecting to Stripe...")
-
-st.caption("LeftoverChef — Leftovers never tasted so good 🍽️")
+            st.success("Redirecting to Stripe..."
+                       st.caption("LeftoverChef — Leftovers never tasted so good 🍽️")
