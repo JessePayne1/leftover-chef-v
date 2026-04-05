@@ -4,7 +4,7 @@ import openai
 
 st.set_page_config(page_title="LeftoverChef", page_icon="🍳", layout="centered")
 
-# Dark blue theme + peach title + turquoise premium button with thin red outline only
+# Dark blue + peach title + turquoise premium button with thin red outline only
 st.markdown("""
     <style>
     .stApp { background-color: #0a2540; color: white; }
@@ -49,27 +49,30 @@ ingredients = st.text_area(
 
 st.markdown('<p class="highlight">Turn your leftovers into delicious meals</p>', unsafe_allow_html=True)
 
-# ====================== MEAL GENERATION (Freemium) ======================
-if ingredients and st.button("🍳 Generate Meal Idea", type="primary"):
-    with st.spinner("Creating a tasty idea from your leftovers..."):
-        try:
-            client = openai.OpenAI()
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": "You are a friendly home chef who creates quick, creative recipes from leftovers."},
-                    {"role": "user", "content": f"Create one simple, delicious recipe using these ingredients: {ingredients}. "
-                                              "Give it a fun title, list the ingredients, and provide short step-by-step instructions."}
-                ]
-            )
-            meal = response.choices[0].message.content
-            st.success("Here's a meal idea for you:")
-            st.markdown(meal)
-        except Exception as e:
-            st.error("Sorry, meal generation failed. Please check that your OpenAI key is correctly added in Streamlit Secrets.")
+# ====================== GENERATE MEAL BUTTON (Always visible in Freemium) ======================
+if st.button("🍳 Generate Meal Idea", type="primary", use_container_width=True):
+    if not ingredients.strip():
+        st.warning("Please type some ingredients or leftovers first!")
+    else:
+        with st.spinner("Creating a tasty idea from your leftovers..."):
+            try:
+                client = openai.OpenAI()
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {"role": "system", "content": "You are a friendly home chef who creates quick, creative recipes from leftovers."},
+                        {"role": "user", "content": f"Create one simple, delicious recipe using these ingredients: {ingredients}. "
+                                                  "Give it a fun title, list the ingredients, and provide short step-by-step instructions."}
+                    ]
+                )
+                meal = response.choices[0].message.content
+                st.success("Here's a meal idea for you:")
+                st.markdown(meal)
+            except Exception as e:
+                st.error("Meal generation failed. Please make sure your OpenAI key is correctly added in Streamlit Secrets.")
 
 if st.session_state.user is None:
-    # ================== LANDING PAGE (Not Logged In) ==================
+    # ================== LANDING PAGE ==================
     st.markdown("### Take pictures of your open fridge and see what meals are built?!")
 
     # Premium button with thin red outline
