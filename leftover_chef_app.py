@@ -4,14 +4,13 @@ import openai
 
 st.set_page_config(page_title="LeftoverChef", page_icon="🍳", layout="centered")
 
-# Dark blue theme
 st.markdown("""
     <style>
-    .stApp { background-color: #0a2540; color: white; }
+    .stApp { background-color: #0a2540; color: white; text-align: center; }
     h1 { color: #ffcc99 !important; }
     .highlight { color: #ffcc99; font-weight: bold; }
     
-    /* Thin red outline ONLY on premium button */
+    /* Thin red outline only on premium button */
     .stLinkButton > a {
         background-color: #00d4ff !important;
         color: black !important;
@@ -34,16 +33,15 @@ st.image("https://via.placeholder.com/800x250/FFCC99/000000?text=🍳+Frying+Pan
 st.title("🍽️ LeftoverChef")
 
 st.markdown("**Freemium Version**")
+
 ingredients = st.text_area(
     "What do you have in the fridge?",
     placeholder="e.g. chicken, rice, broccoli, leftover pizza...",
     height=120
 )
 
-st.markdown('<p class="highlight">Turn your leftovers into delicious meals</p>', unsafe_allow_html=True)
-
-# === GENERATE MEAL BUTTON - Always visible ===
-if st.button("🍳 Generate Meal Idea", type="primary", use_container_width=True):
+# Generate button moved above the tagline + made smaller
+if st.button("🍳 Generate Meal Idea", type="primary"):
     if not ingredients or not ingredients.strip():
         st.warning("Please type some ingredients first!")
     else:
@@ -63,12 +61,14 @@ if st.button("🍳 Generate Meal Idea", type="primary", use_container_width=True
                 st.markdown(meal)
             except Exception as e:
                 st.error(f"Meal generation failed: {str(e)}")
-                st.info("Tip: Make sure 'openai' is in requirements.txt and you redeployed after updating secrets.")
+                st.info("Tip: Make sure you redeployed after updating secrets.")
+
+st.markdown('<p class="highlight">Turn your leftovers into delicious meals</p>', unsafe_allow_html=True)
 
 if st.session_state.user is None:
     st.markdown("### Take pictures of your open fridge and see what meals are built?!")
 
-    stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"   # ← CHANGE THIS
+    stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"   # ← Replace with your real Stripe link
     st.link_button("🚀 Sign Up for Premium $4.99 – Unlock Saving, 5-Min Meals & Microwave Versions", 
                    stripe_url, use_container_width=True)
 
