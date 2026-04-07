@@ -4,7 +4,7 @@ import openai
 
 st.set_page_config(page_title="LeftoverChef", page_icon="🍳", layout="centered")
 
-# Dark blue + peach title + turquoise premium button with thin red outline only
+# Dark blue theme
 st.markdown("""
     <style>
     .stApp { background-color: #0a2540; color: white; }
@@ -18,11 +18,6 @@ st.markdown("""
         font-weight: bold !important;
         border: 2px solid #ff4d4d !important;
         border-radius: 10px !important;
-        padding: 0.9rem 1.6rem !important;
-        font-size: 1.15rem !important;
-    }
-    .stLinkButton > a:hover {
-        background-color: #00b8e0 !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -34,12 +29,10 @@ if "user" not in st.session_state:
 if "is_premium" not in st.session_state:
     st.session_state.is_premium = False
 
-# ====================== HEADER ======================
+# Header
 st.image("https://via.placeholder.com/800x250/FFCC99/000000?text=🍳+Frying+Pan+with+Eggs", use_column_width=True)
-
 st.title("🍽️ LeftoverChef")
 
-# Freemium Version label + input box
 st.markdown("**Freemium Version**")
 ingredients = st.text_area(
     "What do you have in the fridge?",
@@ -49,10 +42,10 @@ ingredients = st.text_area(
 
 st.markdown('<p class="highlight">Turn your leftovers into delicious meals</p>', unsafe_allow_html=True)
 
-# ====================== GENERATE MEAL BUTTON (Always visible in Freemium) ======================
+# === GENERATE MEAL BUTTON - Always visible ===
 if st.button("🍳 Generate Meal Idea", type="primary", use_container_width=True):
-    if not ingredients.strip():
-        st.warning("Please type some ingredients or leftovers first!")
+    if not ingredients or not ingredients.strip():
+        st.warning("Please type some ingredients first!")
     else:
         with st.spinner("Creating a tasty idea from your leftovers..."):
             try:
@@ -69,14 +62,13 @@ if st.button("🍳 Generate Meal Idea", type="primary", use_container_width=True
                 st.success("Here's a meal idea for you:")
                 st.markdown(meal)
             except Exception as e:
-                st.error("Meal generation failed. Please make sure your OpenAI key is correctly added in Streamlit Secrets.")
+                st.error(f"Meal generation failed: {str(e)}")
+                st.info("Tip: Make sure 'openai' is in requirements.txt and you redeployed after updating secrets.")
 
 if st.session_state.user is None:
-    # ================== LANDING PAGE ==================
     st.markdown("### Take pictures of your open fridge and see what meals are built?!")
 
-    # Premium button with thin red outline
-    stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"  # ← Replace with your real Stripe link
+    stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"   # ← CHANGE THIS
     st.link_button("🚀 Sign Up for Premium $4.99 – Unlock Saving, 5-Min Meals & Microwave Versions", 
                    stripe_url, use_container_width=True)
 
@@ -97,14 +89,10 @@ if st.session_state.user is None:
             except Exception as e:
                 st.error(f"Login failed: {str(e)}")
 
-    # Chef icon under the button area
     st.image("https://via.placeholder.com/180x180/FFCC99/000000?text=👨‍🍳+Chef", use_column_width=False)
-
-    # Centered tagline
     st.markdown('<p style="text-align: center; color: #ffcc99; font-size: 1.1rem;">Leftovers never tasted so good 🍽️</p>', unsafe_allow_html=True)
 
 else:
-    # ================== LOGGED-IN VIEW ==================
     with st.sidebar:
         st.success(f"👤 {st.session_state.user.email}")
         if st.button("Logout"):
@@ -113,11 +101,9 @@ else:
             st.rerun()
 
     if st.session_state.is_premium:
-        st.success("✅ Premium Active – You can save meals!")
+        st.success("✅ Premium Active")
         if st.button("❤️ Save this Meal"):
-            st.success("Meal saved to your library!")
-        if st.button("📚 My Saved Meals"):
-            st.info("Your saved meals will appear here soon")
+            st.success("Meal saved!")
     else:
         st.warning("🔒 Free Account")
         stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"
