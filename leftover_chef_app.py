@@ -1,6 +1,7 @@
 import streamlit as st
 from st_supabase_connection import SupabaseConnection
 import openai
+import os
 
 st.set_page_config(page_title="LeftoverChef", page_icon="🍳", layout="centered")
 
@@ -40,14 +41,19 @@ ingredients = st.text_area(
     height=120
 )
 
-# Generate button moved above the tagline + made smaller
+# Smaller Generate button above the tagline
 if st.button("🍳 Generate Meal Idea", type="primary"):
     if not ingredients or not ingredients.strip():
         st.warning("Please type some ingredients first!")
     else:
         with st.spinner("Creating a tasty idea from your leftovers..."):
             try:
-                client = openai.OpenAI()
+                # Fix: Explicitly set the key both ways
+                api_key = st.secrets["OPENAI_API_KEY"]
+                os.environ["OPENAI_API_KEY"] = api_key   # Fallback for the library
+                
+                client = openai.OpenAI(api_key=api_key)
+                
                 response = client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=[
@@ -61,14 +67,14 @@ if st.button("🍳 Generate Meal Idea", type="primary"):
                 st.markdown(meal)
             except Exception as e:
                 st.error(f"Meal generation failed: {str(e)}")
-                st.info("Tip: Make sure you redeployed after updating secrets.")
+                st.info("If this keeps happening, try redeploying again after confirming the secrets.")
 
 st.markdown('<p class="highlight">Turn your leftovers into delicious meals</p>', unsafe_allow_html=True)
 
 if st.session_state.user is None:
     st.markdown("### Take pictures of your open fridge and see what meals are built?!")
 
-    stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"   # ← Replace with your real Stripe link
+    stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"     
     st.link_button("🚀 Sign Up for Premium $4.99 – Unlock Saving, 5-Min Meals & Microwave Versions", 
                    stripe_url, use_container_width=True)
 
@@ -106,5 +112,5 @@ else:
             st.success("Meal saved!")
     else:
         st.warning("🔒 Free Account")
-        stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"
+        stripe_url = https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"
         st.link_button("Upgrade to Premium $4.99 Now", stripe_url, use_container_width=True)
