@@ -68,7 +68,7 @@ st.markdown('<p class="highlight">Turn your leftovers into delicious meals</p>',
 if st.session_state.user is None:
     st.markdown("### Take pictures of your open fridge and see what meals are built?!")
 
-    stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"   # ← Replace with your real Stripe link
+    stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"   # ← Replace with your real Stripe link
     st.link_button("🚀 Sign Up for Premium $4.99 – Unlock Saving, 5-Min Meals & Microwave Versions", 
                    stripe_url, use_container_width=True)
 
@@ -106,5 +106,5 @@ else:
             st.success("Meal saved!")
     else:
         st.warning("🔒 Free Account")
-        stripe_url = "https://buy.stripe.com/YOUR_REAL_STRIPE_CHECKOUT_LINK_HERE"
+        stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"
         st.link_button("Upgrade to Premium $4.99 Now", stripe_url, use_container_width=True)
