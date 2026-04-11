@@ -112,5 +112,5 @@ else:
             st.success("Meal saved!")
     else:
         st.warning("🔒 Free Account")
-        stripe_url = https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"
+        stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"
         st.link_button("Upgrade to Premium $4.99 Now", stripe_url, use_container_width=True)
