@@ -1,116 +1,45 @@
 import streamlit as st
-from st_supabase_connection import SupabaseConnection
 import openai
 import os
 
 st.set_page_config(page_title="LeftoverChef", page_icon="🍳", layout="centered")
 
-st.markdown("""
-    <style>
-    .stApp { background-color: #0a2540; color: white; text-align: center; }
-    h1 { color: #ffcc99 !important; }
-    .highlight { color: #ffcc99; font-weight: bold; }
-    
-    /* Thin red outline only on premium button */
-    .stLinkButton > a {
-        background-color: #00d4ff !important;
-        color: black !important;
-        font-weight: bold !important;
-        border: 2px solid #ff4d4d !important;
-        border-radius: 10px !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
+st.title("🍽️ LeftoverChef - Debug Mode")
 
-conn = st.connection("supabase", type=SupabaseConnection)
+st.write("**Testing OpenAI Key**")
 
-if "user" not in st.session_state:
-    st.session_state.user = None
-if "is_premium" not in st.session_state:
-    st.session_state.is_premium = False
+# Show what secrets Streamlit actually sees
+st.write("Available secrets keys:", list(st.secrets.keys()) if st.secrets else "No secrets found")
 
-# Header
-st.image("https://via.placeholder.com/800x250/FFCC99/000000?text=🍳+Frying+Pan+with+Eggs", use_column_width=True)
-st.title("🍽️ LeftoverChef")
+if "OPENAI_API_KEY" in st.secrets:
+    st.success("✅ OPENAI_API_KEY found in secrets!")
+    api_key = st.secrets["OPENAI_API_KEY"]
+    st.write("Key starts with:", api_key[:20] + "...")
+else:
+    st.error("❌ OPENAI_API_KEY is MISSING from secrets")
 
-st.markdown("**Freemium Version**")
+ingredients = st.text_area("What do you have in the fridge?", placeholder="chicken rice broccoli", height=100)
 
-ingredients = st.text_area(
-    "What do you have in the fridge?",
-    placeholder="e.g. chicken, rice, broccoli, leftover pizza...",
-    height=120
-)
-
-# Smaller Generate button above the tagline
-if st.button("🍳 Generate Meal Idea", type="primary"):
-    if not ingredients or not ingredients.strip():
-        st.warning("Please type some ingredients first!")
+if st.button("🍳 Generate Meal Idea"):
+    if not ingredients.strip():
+        st.warning("Type ingredients first")
     else:
-        with st.spinner("Creating a tasty idea from your leftovers..."):
+        with st.spinner("Trying to generate..."):
             try:
-                # Fix: Explicitly set the key both ways
                 api_key = st.secrets["OPENAI_API_KEY"]
-                os.environ["OPENAI_API_KEY"] = api_key   # Fallback for the library
-                
+                os.environ["OPENAI_API_KEY"] = api_key
                 client = openai.OpenAI(api_key=api_key)
                 
                 response = client.chat.completions.create(
                     model="gpt-4o-mini",
                     messages=[
-                        {"role": "system", "content": "You are a friendly home chef who creates quick, creative recipes from leftovers."},
-                        {"role": "user", "content": f"Create one simple, delicious recipe using these ingredients: {ingredients}. "
-                                                  "Give it a fun title, list the ingredients, and provide short step-by-step instructions."}
+                        {"role": "system", "content": "You are a helpful chef."},
+                        {"role": "user", "content": f"Create a simple recipe with: {ingredients}"}
                     ]
                 )
-                meal = response.choices[0].message.content
-                st.success("Here's a meal idea for you:")
-                st.markdown(meal)
+                st.success("Success!")
+                st.write(response.choices[0].message.content)
             except Exception as e:
-                st.error(f"Meal generation failed: {str(e)}")
-                st.info("If this keeps happening, try redeploying again after confirming the secrets.")
+                st.error(f"Error: {str(e)}")
 
-st.markdown('<p class="highlight">Turn your leftovers into delicious meals</p>', unsafe_allow_html=True)
-
-if st.session_state.user is None:
-    st.markdown("### Take pictures of your open fridge and see what meals are built?!")
-
-    stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"     
-    st.link_button("🚀 Sign Up for Premium $4.99 – Unlock Saving, 5-Min Meals & Microwave Versions", 
-                   stripe_url, use_container_width=True)
-
-    if st.button("🔑 Already have an account? Login"):
-        st.session_state.show_login = True
-        st.rerun()
-
-    if st.session_state.get("show_login", False):
-        st.subheader("Login")
-        email = st.text_input("Email", key="login_email")
-        password = st.text_input("Password", type="password", key="login_password")
-        if st.button("Login", type="primary"):
-            try:
-                res = conn.auth.sign_in_with_password({"email": email, "password": password})
-                st.session_state.user = res.user
-                st.success("Welcome back!")
-                st.rerun()
-            except Exception as e:
-                st.error(f"Login failed: {str(e)}")
-
-    st.image("https://via.placeholder.com/180x180/FFCC99/000000?text=👨‍🍳+Chef", use_column_width=False)
-    st.markdown('<p style="text-align: center; color: #ffcc99; font-size: 1.1rem;">Leftovers never tasted so good 🍽️</p>', unsafe_allow_html=True)
-
-else:
-    with st.sidebar:
-        st.success(f"👤 {st.session_state.user.email}")
-        if st.button("Logout"):
-            conn.auth.sign_out()
-            st.session_state.user = None
-            st.rerun()
-
-    if st.session_state.is_premium:
-        st.success("✅ Premium Active")
-        if st.button("❤️ Save this Meal"):
-            st.success("Meal saved!")
-    else:
-        st.warning("🔒 Free Account")
-        stripe_url = "https://buy.stripe.com/6oU7sM9Pa9oIdIrfPz4sE00"
-        st.link_button("Upgrade to Premium $4.99 Now", stripe_url, use_container_width=True)
+st.caption("Debug version - tell me what you see above")
